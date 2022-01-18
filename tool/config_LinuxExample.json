@@ -1,0 +1,40 @@
+{
+    "discovery": {
+        "pingTestIP": "8.8.8.8",
+        "httpsTestUrl": "www.upc.edu",
+        "proxy": ""
+    },
+    "payload": {
+        "path": "./maltest.sh",
+        "URL": "www.example.com/maltest.sh",
+        "pathToSave": "/home/user/legitFile.sh",    
+        "preArguments": "",
+        "postArguments": ""
+    },
+    "persistence": {
+        "adduserName": "ftp2",
+        "adduserPass": "randompasswd",
+        "adduserArgs": "-s /bin/bash",
+        "cronjobTime": "@reboot",
+        "serviceName": "servtest",
+        "serviceDesc": ""
+    },
+    "backdoors": {
+        "serverIPURL": "192.168.1.137",
+        "serverPort": "8008",
+        "serverUser": "linux",
+        "sshAuthKey": "",
+        "HTTPSCommand": "",
+        "HTTPSCommandPreProxy":"",
+        "HTTPSCommandPostProxy": "",
+        "DNSCommand": "",
+        "ICMPCommand": ""        
+    },
+    "preferences": {
+        "excludedTechniques": [],
+        "includedTechniques": ["checkRoot"],
+        "excludedProtocols": [],
+        "forceProtocols": []
+    }
+}
+

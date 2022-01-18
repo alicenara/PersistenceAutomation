@@ -1,0 +1,41 @@
+\section{Scope of the project}
+In this section, the main goals and the scope are introduced, though they are further developed in the \textit{Tasks description} subsection (\ref{ssec:tasks}). The obstacles of the project are also presented, along with an evaluation on how to overcome them.
+
+\subsection{Objectives}
+\label{ssec:objectives}
+The project has two main goals:
+\begin{itemize}
+\item Research about different types of persistence deployment to understand which techniques are being actively used nowadays, not only in different operating systems but also in diverse environments.
+\item Build a solution that helps to automate the use of persistence mechanisms. It must be easy to configure, so it can be adjusted to its users' needs, and also it must be adapted to run in both Windows and Linux systems, as these are the most common operating systems in a corporation.
+\end{itemize}
+
+\subsection{Scope}
+\label{ssec:scope}
+To achieve the purposes of this project, the developed tool must meet the following requirements:
+\begin{enumerate}
+\item Easy to configure to the user needs, and available for both Windows (Windows 10) and Linux (Debian based).
+\item When creating a backdoor, it should use frequently used communication protocols like HTTPS.
+\item Well documented code, so it can be modified effortlessly if needed.
+\item Finally, it should also perform some actions related to the "Discovery" tactic to be able to deploy the most adequate persistence techniques for the machine where it is being executed.
+\end{enumerate}
+
+%\pagebreak
+It is necessary, though, to also keep in mind the following considerations:
+\begin{itemize}
+\item As there are lots of ways to deploy persistence, the conducted research focuses solely on the ones that can be done on workstations and servers (although persistence in Active Directory is studied as well), and the developed tool only covers the most used techniques by cyber threat actors.
+\item While it would be best if the tool is designed to run as quietly as possible in order to avoid detection from simple antimalware software like \textit{Windows Defender}, this requirement is not contemplated in the making of this project since implementing defense evasion techniques is out of its scope.
+\item Even though the program must be available on multiple platforms, considering that it is programmed in a specific language and version, it may not work on all systems (like old versions of Windows and different Linux distributions).
+%\item Finally, since not all persistence processes can be automated, it is possible that not all techniques gathered in the research section may end up being part of the final program.
+\end{itemize}
+
+It is expected to meet the 448 hours planned, as exposed in section \ref{sec:sched}, without delays; and to need no more than the given budget of 12.656,88€, explained in section \ref{sec:budget}, to finish this project.
+
+Finally, each part of this document has its risks covered: on section \ref{ssec:obstacles} (\textit{Contextualization and Scope}), on section \ref{ssec:alternativesSchedule} (\textit{Project Schedule}) and on section \ref{ssec:budgetControl} (\textit{Budget Evaluation}). So even if it was not possible to meet previous scheduling and budget requirements, there were alternatives to finish the project successfully anyway.
+
+
+\subsection{Obstacles and contingency plans}
+\label{ssec:obstacles}
+One of the most difficult parts of this project has been to make it useful for real-life attack simulations, since the machines used to test it were new virtual instances created just for this purpose.
+Workstations and servers inside a network might not be configured alike, as users may have different levels of permissions, or some folders (like temporal or system ones) could be unreachable.
+
+To overcome these possible obstacles, this tool has been built using the information gathered about the most frequent persistent techniques and the standard machine configurations as the basis of its development. And since its documentation is accessible and extensive, it provides the necessary knowledge to be able to modify the tool later according to the needs of each user.

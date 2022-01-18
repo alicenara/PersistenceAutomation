@@ -1,0 +1,31 @@
+{
+    "discovery": {
+        "pingTestIP": "",
+        "httpsTestUrl": "",
+        "proxy": ""
+    },
+    "payload": {
+        "path": "",
+        "URL": "",
+        "pathToSave": "",    
+        "preArguments": "",
+        "postArguments": ""
+    },
+    "persistence": {
+        "adduserName": "",
+        "adduserPass": ""
+    },
+    "backdoors": {
+        "HTTPSCommand": "",
+        "HTTPSCommandPreProxy":"",
+        "HTTPSCommandPostProxy": "",
+        "DNSCommand": "",
+        "ICMPCommand": ""        
+    },
+    "preferences": {
+        "excludedTechniques": [],
+        "includedTechniques": [],
+        "excludedProtocols": [],
+        "forceProtocols": []
+    }
+}

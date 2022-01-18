@@ -1,0 +1,95 @@
+%\subsection{Linux script}
+%\label{ssec:dev-linux}
+%\subsection{Windows script}
+%\label{ssec:dev-windows}
+%\subsection{Testing phases}
+%\label{ssec:dev-testing}
+\pagebreak
+\subsubsection{Implementation of the scripts}
+This subsection covers both the implementation and testing phases of the waterfall model.
+\paragraph{Linux script}
+Starting with the script for Linux, it has been programmed using Python 3.8.10, and tested in Linux Mint 20.2 LTS (based on Ubuntu 20.04 LTS, which, in its turn, is based on Debian 11.0). That means that it should work in most Debian-based systems.
+
+It also has some dependencies, like cron or systemd, but all of these system-related programs should be pre-installed in most Linux distributions.
+
+In the table \ref{tab:linScript}, some of the created functions, along with many used commands are listed, ordered by the different categories established in the design section.
+
+\begin{table}[!htb]
+\centering
+{\setlength{\tabcolsep}{1em}
+  \begin{tabular}{@{\extracolsep{\fill}}| c | c | c |}
+  \hline \multicolumn{1}{|c|}{\textbf{Discovery}} & \textbf{Persistence} & \textbf{Backdoors}\\ \hline \hline 
+  	\begin{tabular}{@{}c@{}}Check proxy: environment \\ variables, like "\texttt{HTTP\_PROXY}"\end{tabular} & \begin{tabular}{@{}c@{}}Copy payload\\ to new path\end{tabular} &  \texttt{SSH} reverse shell \\ \hline
+  	Check HTTPS: \texttt{requests} & Create new users & \texttt{SSH} authorized keys \\ \hline
+  	Check DNS: \texttt{getaddrinfo} & \begin{tabular}{@{}c@{}}\texttt{crontab} user \\and root \end{tabular} & \texttt{netcat} reverse shell  \\ \hline
+  	Check ICMP: \texttt{ping} & \begin{tabular}{@{}c@{}}init scripts:\\.bashrc (unprivileged),\\init.d folder (privileged)\end{tabular} & \begin{tabular}{@{}c@{}}External tool: HTTPS,\\ DNS, ICMP connections\end{tabular} \\ \hline
+  	\begin{tabular}{@{}c@{}}Check process privileges: \\ \texttt{geteuid} ( id = 0 means root)\end{tabular}& \texttt{systemd} &  \\ \hline
+  \end{tabular}}
+  \caption{Functionalities and commands used on the Linux script} \vspace{3pt}
+  \label{tab:linScript}
+\end{table}
+
+%Mirar proxy: environment variables, como "HTTP\_PROXY" (no he encontrado otra forma)
+%No he encontrado forma especifica de saber si es el usuario "root" o si es un user haciendo "sudo".
+
+The main function works as designed: after reading the configuration file, it executes the relevant discovery, persistence, and backdoor functions. After that, it displays what has been identified with the discovery techniques, and also the persistence and backdoor actions that have been carried out.
+
+\pagebreak
+\paragraph{Windows script}
+This script has been programmed using PowerShell 5.1, and tested in a Windows 10 Pro version 2004. Given that Microsoft Windows is an operating system that updates frequently and automatically, this script should work in all Windows 10 versions. And regarding previous system versions, its limitations might be tied to the PowerShell commands, as there are lots of differences between versions.
+
+Another important aspect to take into account is that, even though this script does not have dependencies since it uses only resources that are installed by default in all Windows systems, it does require the user to have enough privileges to run scripts in PowerShell, given that it is restricted by default (although there are multiple ways to bypass this measure).
+
+In table \ref{tab:winScript}, there are listed some functions, and a few commands used as well.
+
+\begin{table}[!htb]
+\centering
+{\setlength{\tabcolsep}{1em}
+  \begin{tabular}{@{\extracolsep{\fill}}| c | c | c |}
+  \hline \multicolumn{1}{|c|}{\textbf{Discovery}} & \textbf{Persistence} & \textbf{Backdoors}\\ \hline \hline 
+  	Check proxy: Registry & \begin{tabular}{@{}c@{}}Copy payload\\ to new path\end{tabular} &  \texttt{RDP} configuration \\ \hline
+  	Check HTTPS: \texttt{Invoke-WebRequest} & Create new users & \begin{tabular}{@{}c@{}}External tool: HTTPS,\\ DNS, ICMP connections\end{tabular}  \\ \hline
+  	Check DNS: \texttt{Resolve-DnsName} & Startup Folders &   \\ \hline
+  	Check ICMP: \texttt{ping} & Scheduled Tasks & \\ \hline
+  	\begin{tabular}{@{}c@{}}Check process privileges: checking if\\the user running it is administrator\end{tabular}& \begin{tabular}{@{}c@{}}Registry:\\HKCU (unprivileged),\\HKLM (privileged)\end{tabular} &  \\ \hline
+  \begin{tabular}{@{}c@{}}Check user privileges: checking\\the groups the user belongs to\end{tabular} & Services &  \\ \hline
+   & WMI &  \\ \hline
+   & BITS Jobs &  \\ \hline
+   \end{tabular}}
+  \caption{Functionalities and commands used on the Windows script} \vspace{3pt}
+  \label{tab:winScript}
+\end{table}
+
+%* For the proxy discovery, both the configured settings and the stored credentials are retrieved from the Registry among other mechanisms, from keys like "\verb|HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings|".
+
+% ICMP: ping (no he usado Test-Connection porque va lentisimo)
+% Mirar si proceso elevado: mirando si el usuario que lo tira es admin
+% Mirar si el usuario es privilegiado: mirar si uno de los grupos al que pertenece el usuario es "Administrators" (lo miro por SID para que no haya diferencias con los idiomas).
+%RDP (iniciar el servicio para que la maquina quede expuesta)
+The main function on Windows works the same as on Linux, with the only difference that, on Windows, it is possible to check if the user is an administrator even though the process is not elevated, so a function could be added to try to launch a privileged shell, to deploy persistences that need elevated permissions.
+
+\pagebreak
+\paragraph{Testing phases}
+As mentioned before, some testing has been done after the implementation of each functionality, in order to check that everything worked as intended.
+
+Extensive testing has been also performed when the main loop of each script was finished, to evaluate how functions work with each other.
+
+%However, there were no testing scripts done but only testing configuration files.
+%as the tool is intended to run autonomously, requiring only a config file to work.
+
+\subsubsection{General considerations}
+While developing this tool, techniques execution were not always adjusted to real-life situations or environments. Some of these elements are even remarked on in the "Future work" part of the conclusions, section \ref{ssec:futureWork}.
+
+For this reason, there are a few parts that should be better adapted to deploy these scripts in real scenarios:
+\begin{itemize}
+\item To execute the Windows script, Windows Defender has been deactivated because it stopped its execution when some techniques were run (also depending on the external tools used). What would be better is to change the code or add delays to avoid alerting the antimalware software.
+
+In real-life audits, where antivirus systems cannot be altered manually, some tests would be performed both with Windows Defender and also with the security systems of the target enterprise, to be sure that the tool is not detected by any of them.
+
+\item About the external tool parameter, in next chapter examples (section \ref{ssec:results}), it is shown that the programs used to test the scripts are both Mistica\cite{Mistica} and HTTP-revshell\cite{HTTPRevshell}, which are further explained in the next section. 
+
+Even though these tools are still not as detected and blocked as others, in a real attack they would be slightly modified to avoid being detected either when downloaded (detection via hash) or executed (detection using keywords, like function names).
+
+\item These scripts have been tested in two different and new virtual machines, as stated before: a Windows 10 version 2004 and a Linux Mint version 20.2 LTS. As these machines did not have any special configuration, it is possible that, even though the script did fully work on them, it may not work the same in other OS versions or on machines with different configurations.
+
+\end{itemize}

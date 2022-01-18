@@ -1,0 +1,88 @@
+\bigskip
+
+\subsection{General techniques to deploy persistence}
+\label{ssec:persistOthers}
+When executing persistence, there are several mechanisms that do not apply only to one operating system, as they are common functions or problems in all kinds of systems. Some of them are: 
+\begin{itemize}
+\item \textbf{Hotkey modifications}: hotkeys (or keyboard shortcuts) are a series of one (or several keys) that invoke a software program to perform a preprogrammed action when pressed. Two of the most common ones are "\verb|Ctrl + C|" and "\verb|Ctrl + V|" to copy and paste respectively.
+
+These keys can be modified to execute multiple commands at once, and given that some of them are being used frequently by all types of users, they are an easy target to deploy persistence. 
+
+\item \textbf{Vulnerable software}: multiple programs launch certain scripts or libraries at some point in their execution, and this process of loading external resources can sometimes be altered to execute malicious payloads, as SharPersist does in section \ref{sssec:windowsTools}. 
+
+\item \textbf{Malicious libraries, binary replacements and PATH modifications}: another persistence method involving legitimate libraries or binaries, like \texttt{dir} (Windows) or \texttt{ls} (Linux), is to either:
+\begin{itemize}
+\item change them for malicious or tampered ones, with the same name and in the same location (which usually perform the same action as the original files in addition to the malicious execution, to avoid raising suspicions)
+\item or modify the route to those files, sometimes changing the global variable \texttt{PATH}, present in both Windows and Linux systems, or changing a specific system file with the path.
+\end{itemize} 
+
+\item \textbf{Pre-OS Boot}: During the booting process of a computer, firmware and various startup services are loaded before the operating system. These programs control the flow of execution before the operating system takes control, and as stated in the MITRE website\cite{MitrePreOS}, adversaries may abuse them as a way to establish persistence on a system.
+
+\pagebreak
+To deploy this technique, data can be overwritten in boot drivers or firmware, such as BIOS (Basic Input/Output System) or UEFI (the Unified Extensible Firmware Interface), to persist on systems at a layer below the operating system, making this technique particularly difficult to detect as malware at this level cannot be detected by host software-based defenses.
+
+This kind of persistence is rather old and not used a lot nowadays, because of the advanced protection modern computers have; but it can still work in environments that use old technology, like Industrial Control Systems (ICS), or that are not well protected or isolated, like intelligent devices (IoT, devices connected to the Internet).
+
+\bigskip
+\item \textbf{Creating users or getting their passwords}: adding users to a system can be useful if there is a remote management tool already installed on the computer, working as a backdoor mechanism: it may allow an adversary to re-obtain access to the computer if their initial vulnerated user changes their password, for example. 
+
+Getting other users' passwords is very convenient for the same reason, even though it usually requires elevated privileges. But, since creating a user generates plenty of logs, retrieving some stored passwords sometimes is a better option.
+
+\bigskip
+\item \textbf{Web Shells}: when dealing with web servers, a typical backdoor to deploy is a web shell: a shell-like interface that enables the webserver to be remotely accessed and manipulated, as the shell capabilities allow adversaries to execute some (or all) kinds of commands.
+
+As it is usually a file that runs on the webserver, it needs to be programmed in a language that the server supports. Also, this file may have limited permissions given that security policies usually restrict the user that is running the website service, to avoid this kind of attack.
+
+\bigskip
+%\todo[inline]{En el seguent punt l'altre profe em va dir que igual podria posar captures d'exemples d'algunes de les eines a l'annex, però no em va donar temps de fer-ho. Si tinc temps igual ho poso.}
+
+\pagebreak
+\item \textbf{Proxies and communication tunnels}: when setting backdoors, the communication protocol is chosen depending on the environment conditions, as explained in section \ref{sssec:backProt}. But the classic one is HTTPS, as can be seen in table \ref{tab:toolsBackdoor}, because it is easily blended with normal traffic.
+
+\vspace{7pt}
+
+%However, not only the communication protocol is important but also how the data will be encrypted, as using plain text data could cause network security systems to detect certain keywords and generate alerts. Consequently, many of the tools that deploy backdoors that connect to external servers, do not use only one communication protocol, but two, being often one of them \texttt{SOCKS5}.
+
+%A \textbf{SOCKS5}, or Socket Secure, is a network protocol
+
+%\begin{itemize}
+%\item \textbf{HTTPS}: 
+%\item \textbf{Proxies}
+%\item \textbf{DNS}
+%\item \textbf{ICMP}
+%\end{itemize}
+%\textbf{Description}
+
+
+\begin{table}[!htb]
+\centering
+{\setlength{\tabcolsep}{1em}
+  \begin{tabular}{@{\extracolsep{\fill}}| l | c | c | c |}
+  \hline \multicolumn{1}{|c|}{\textbf{Name}} & \textbf{Protocol} & \textbf{Target system} & \textbf{Dependences} \\ \hline \hline 
+  	\href{https://github.com/sensepost/reGeorg}{reGeorg} & HTTP(s) & Windows, Linux & Python 2.7 \\ \hline
+  	\href{https://github.com/SECFORCE/Tunna}{Tunna} & HTTP(s) & Windows, Linux & Python 2.7 \\ \hline
+  	\href{https://github.com/blackarrowsec/pivotnacci}{pivotnacci} & HTTP(s) & Windows, Linux & Python 3 \\ \hline
+  	\href{https://github.com/Ne0nd0g/merlin}{Merlin} & HTTP(s) & Windows, Linux &  \\ \hline
+  	\href{https://github.com/3v4Si0N/HTTP-revshell}{HTTP-revshell} & HTTP(s) & Windows & PowerShell and Python 3 \\ \hline
+  	\href{https://github.com/iagox86/dnscat2}{DNSCat2} & DNS & Windows, Linux & C and Ruby \\ \hline
+  	\href{https://github.com/hemp3l/icmpsh}{icmpsh} \small(\href{https://github.com/bdamele/icmpsh}{Python ver.})& ICMP & Windows & C, Perl (and Python 2.7) \\ \hline  	
+  	\href{https://github.com/BishopFox/sliver}{Sliver} & HTTP(s) and DNS & Windows, Linux &  \\ \hline
+  	\href{https://github.com/IncideDigital/Mistica}{Mística} & HTTP(s), DNS and ICMP & Windows, Linux & Python 3.7 and \texttt{dnslib}\\ \hline
+  \end{tabular}}
+  \caption{Tools to connect to remote servers.} \vspace{3pt}
+  \label{tab:toolsBackdoor}
+\end{table}
+
+When working on networks with web proxies, additional efforts are necessary to get communication through the HTTPS protocol, as stated in section \ref{sssec:researchDiscProxy}. For that reason, multiple tools have been developed in order to adapt to the proxy's requirements:
+\begin{itemize}
+\item \textbf{Common credentials}: for this kind of authentication,  which is quite frequent, there are multiple tools that can be used like Putty\cite{PuttyWeb} (a terminal emulator, serial console, and network file transfer application for Windows), and Proxychains\cite{ProxyChainsWeb} (a tool for Linux that can be configured with credentials to connect applications through proxies).  
+
+%\footnotetext{https://www.putty.org/}
+%\footnotetext{https://github.com/haad/proxychains}
+
+\item \textbf{Active Directory authentication}: if the authentication is performed using Active Directory protocols, like NTLM or Kerberos (which are explained below, in section \ref{ssec:ad}), even though there are some tools like \texttt{cntlm} (Windows, Linux) that could prove useful, sometimes the authentication is performed automatically when running the backdoor in the compromised machine, as both the user and the machine is authenticated towards the Active Directory. So, depending on the configuration or the system, additional changes or configurations may not be needed.
+\end{itemize}
+
+In addition, several tools have been created considering this obstacle, like PoshC2\cite{PoshC2}, which is a proxy-aware framework with lots of tools, including some to deploy HTTPS backdoors.
+
+\end{itemize}

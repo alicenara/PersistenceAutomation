@@ -1,0 +1,64 @@
+%\newcommand{\tQuatreHours}{162\xspace}
+\newcounter{tQuatreUnHours}
+\setcounter{tQuatreUnHours}{19} 
+\newcounter{tQuatreDosHours}
+%\setcounter{tQuatreDosHours}{36} 
+\setcounter{tQuatreDosHours}{32} 
+\newcounter{tQuatreTresHours}
+%\setcounter{tQuatreTresHours}{28}
+\setcounter{tQuatreTresHours}{0} 
+\newcounter{tQuatreQuatreHours}
+%\setcounter{tQuatreQuatreHours}{37} 
+\setcounter{tQuatreQuatreHours}{51} 
+\newcounter{tQuatreCincHours}
+%\setcounter{tQuatreCincHours}{48} 
+\setcounter{tQuatreCincHours}{57} 
+
+\newcounter{tQuatreHours}
+\setcounter{tQuatreHours}{%
+	\numexpr\value{tQuatreUnHours}+\value{tQuatreDosHours}+\value{tQuatreTresHours}+\value{tQuatreQuatreHours}+\value{tQuatreCincHours}\relax%
+	} 
+
+\subsubsection{T4 - Main development}
+\label{sssec:mainDevTask}
+
+\textbf{Summary}
+\begin{table}[ht]
+\centering
+  \begin{tabular}{| c | c | c |}
+  \hline \textbf{Hours assigned} & \textbf{Hours per day} & \textbf{Weeks} \\ \hline  
+  \the\value{tQuatreHours}  & 4 &  8,5      \\ \hline
+  \end{tabular}
+  \caption{Main development hours review} \vspace{3pt}
+  \label{tab:mainDev}
+\end{table}
+
+\par{\textbf{Explanation}}\\
+This task consist of a group of subtasks involved with the development of the tool, all carried out using the "waterfall methodology", as most of them needed to be finished before proceeding to the next one. Also, the coding subtasks were short enough to test them fully once finished (as they needed to be tested individually), which fits the model as well.
+
+More information about the methodology used on this task is explained in section \ref{ssec:methodology}.
+
+To follow this methodology specification, all coding subtasks (the third and the fourth subtask) were divided into 3 different stages: Development, Testing, and Documentation. 
+\begin{itemize}
+\item The \textit{Development} stage started when the last subtask was finished and was the most time-consuming. It could also start again after a testing phase if it found major problems that required more development or a change in the approach.
+\item Both \textit{Testing} and \textit{Documentation} started once the Development stage of the subtask was already finished, and were done in parallel.
+\end{itemize}
+
+%It is worth mentioning that some of these subtasks were done at the same time as \textit{T3 - Research}, as can be seen in the Gantt chart.
+
+The subtasks are described below.
+
+\pagebreak
+\subimport{./}{T4S1.tex}\\
+
+\pagebreak
+\subimport{./}{T4S2.tex}\\
+
+
+%\subimport{./}{T4S3.tex}\\
+
+\pagebreak
+\subimport{./}{T4S4.tex}\\
+
+\pagebreak
+\subimport{./}{T4S5.tex}

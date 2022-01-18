@@ -1,0 +1,60 @@
+
+\pagebreak
+\section{Conclusions and proposals}
+\label{sec:conclusions}
+%\begin{verbatim}
+%¯\_(._.)_/¯
+%latex no em deixa fer shrug..
+%\end{verbatim}
+
+After researching how persistence is deployed, developing a tool that automates some of the analyzed techniques in various operating systems, and even studying how it is applied in Active Directory, the conclusions drawn are detailed in the following sections.
+
+\subsection{Achieved goals}
+This project had two main goals, which have been achieved at different levels:
+\begin{enumerate}
+\item Regarding the research, in addition to observing a summary about its history, both Windows and Linux's most frequent techniques have been gathered and documented, and even some domain mechanisms have been observed. Of course, there are plenty more techniques to collect, but they are not as typical as the ones described in the Research chapter (section \ref{sec:research}), and also they are already documented on other projects like MITRE\cite{MitreWeb}.
+\item A tool has been developed for both Windows and Linux systems, which implements some of the techniques described in the Research section. It is very configurable, easy to use, and works with the data gathered through discovery mechanisms to automate the deployment of persistence. 
+\end{enumerate}
+
+So all the major goals have been achieved, including everything that was inside the scope of the project.
+%Additionally, some examples to deploy persistence in Active Directory have been developed as well, even though it was not one of the main goals of this project because of its complexity, and due to the low probability that it can be used in a real-life environment.
+
+\subsection{Conclusions}
+Having the achieved goals, the research, and the developed tool in mind, the conclusions are that:
+\begin{itemize}
+\item There are lots of techniques to persist in an operating system or a big environment like Active Directory, and although the most used mechanisms are those that have been around for years, new methods and tools are being created over time to ease and improve its deployment.
+\item But, while it is possible to automate some of the studied techniques for certain systems, complete automation is never possible because of the different environments and configurations. Therefore, in many cases, a more manual approach will continue to be required. 
+\item Also, there are environments (like Active Directory) where it is very difficult to automate any kind of persistence, as each instance has very different elements and configurations, so only scripts for very specific scenarios (or proofs of concepts, PoCs) can be developed.
+
+\pagebreak
+\item Finally, \textit{Persistence} is an important and widely study tactic, but it cannot work alone: techniques from other tactics like \textit{Initial Access} or \textit{Privilege Escalation} need to be executed before, to be able to deploy any kind of persistence. And it is also a good practice to run some other mechanisms after, such as "\textit{Clear Windows Event Logs}" or "\textit{Clear Command History}" from the \textit{Defense Evasion} tactic, to hide all the activity performed and thus achieve better persistence.
+\end{itemize}
+
+\subsection{Future work}
+\label{ssec:futureWork}
+Despite all the work done in both the research and the tool development sections, there are still several components that can be improved or extended on both parts.
+
+About the research section, there are some elements that could be added:
+\begin{itemize}
+\item The Active Directory part could be extended to include some more techniques, as there are plenty of AD mechanisms to deploy persistence. However, as they are complex to explain, they have been left out for future versions of this project.
+\item The research section could also be expanded to include some other operating systems, like macOS and Android, the latter being especially interesting as malware is becoming more and more frequent in mobile systems, as a consequence of the amount of personal data they hold.
+\item Additionally, there are other environments that could be useful to research about, in particular small devices connected to the Internet (IoT), and critical infrastructure or Industrial Control Systems (ICS), as they are also used a lot. However, they are more complex and difficult to study than the previously mentioned.
+\end{itemize}
+
+And concerning the developed tool, some other functionalities could be created, for example:  
+\begin{itemize}
+\item Some more techniques could be automated, like the "COM Object Hijacking" for Windows or the "Hotkeys modification" for Linux.
+\item It could also be more configurable, and the configuration could be provided by other methods instead of an external file, like more arguments or in a variable inside the actual script.
+\item Furthermore, to better hide from the security mechanisms, the code could be obfuscated or a dummy variable could be created along with a function to change it, modifying the script in a meaningless way but changing its hash in the process.
+\item Finally, some other techniques could be coded into the tool to achieve better persistence, like disabling the antivirus, cleaning up the trail of logs left after the deployment, or even elevating privileges, to be able to implement other types of persistence. 
+\end{itemize}
+
+\pagebreak
+Last but not least, some other additions could add value to the tool, such as: 
+\begin{itemize}
+\item A server could be created to download the tool, and it could deliver automatically the most suitable script using the information received in the request (parsing the "User-Agent" field, which contains details about the operating system that made that request).
+\item As the testing part was done only on controlled Virtual Machines, more testing could be performed with segmented networks, networks with proxies, or even with systems without Internet, to adapt the tool to these kinds of environments.
+\item Also, it could be adjusted to work with other Windows and Linux versions, and even with other programming language versions (like PowerShell 2).
+\item Lastly, after achieving persistence, it could also be interesting to \textbf{hardenize} the system, which means to make it difficult for other adversaries to take control of it as well. There are tools that help to achieve this goal, like \textit{fail2ban}\cite{fail2ban}.
+\end{itemize}
+

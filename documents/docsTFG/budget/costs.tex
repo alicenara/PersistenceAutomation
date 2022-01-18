@@ -1,0 +1,181 @@
+\newcounter{PMHours}
+\setcounter{PMHours}{%
+	\numexpr\value{tUnHours}+\value{tDosHours}+\value{tTresHours}+\value{tCincHours}+\value{tSisHours}\relax%
+	} 	
+\newcounter{PMHoursTotal}
+\setcounter{PMHoursTotal}{\numexpr\value{PMHours}*26\relax} 
+	
+\newcounter{DesignHours}
+\setcounter{DesignHours}{%
+	\numexpr\value{tQuatreUnHours}+\value{tQuatreDosHours}\relax%
+	} 
+\newcounter{DesignHoursTotal}
+\setcounter{DesignHoursTotal}{\numexpr\value{DesignHours}*31\relax} 
+
+\subsection{Costs of resources}
+\label{ssec:costOfResources}
+As described in section \ref{ssec:resources}, two different types of resources were necessary for the development of this project: hardware, and software. But there is another resource which cost needs to be added to the final budget: human resources, the developers.
+
+All the costs calculated in this section are used to get an estimation of the total budget required to build this project.
+
+\subsubsection{Hardware and software resources}
+Table \ref{tab:hardsoft} shows the budget needed to use software and hardware resources, although some of them are open source and therefore no costs are related. 
+
+Also, each material resource has a depreciation that is calculated using the following formula:
+
+\vspace{25pt}
+\centerline{ \LARGE $ Depreciation = \frac{Resource\ \ cost}{Useful\ \ life\ \ (years)} * \frac{6\ \ months\ \ of\ \ work}{12\ \ months\ \ per\ \ year} $ } 
+\vspace{10pt}
+
+In this project, it is assumed that the average useful life of all hardware resources is at least 4 years, and 2 years for software ones. 
+
+Section \ref{ssec:resources} - \textit{Resources} provides a breakdown of each of the resources listed in the table below.
+
+\begin{table}[!htb]
+\centering
+  \begin{tabular}{| l | c | c | c |}
+  \hline \textbf{Product} & \textbf{Price} & \textbf{Useful life} & \textbf{Depreciation} \\ \hline 
+  \multicolumn{4}{|c|}{ \textbf{Hardware}} \\ \hline
+  Computer & 800,00€ & 4 years & 100,00€        \\ \hline 
+  \multicolumn{4}{|c|}{  \textbf{Software}} \\ \hline
+  Development and testing tools & 0,00€ & 2 years & 0,00€        \\ \hline
+  Linux Mint 20.2 & 0,00€ & 2 years & 0,00€        \\ \hline
+  Windows 10 Home & 145,00€ & 2 years & 36,25€        \\ \hline
+  VirtualBox & 0,00€ & 2 years & 0,00€        \\ \hline
+  Version control tools & 0,00€ & 2 years & 0,00€		\\ \hline
+  \textbf{Total} & 945,00€ &  & 136,25€  \\ \hline 
+  \end{tabular}
+  \caption{Hardware and software resources budget.} \vspace{3pt}
+  \label{tab:hardsoft}
+\end{table}
+
+\pagebreak
+\subsubsection{Human resources}
+\label{sssec:humanResources}
+%This subsection will define all positions needed to develop this software. 
+
+Human costs, composed of several roles, are calculated using the "Remuneration study 2021" done by PagePersonnel\cite{PagePersonnel}. The total cost per day is calculated using the following procedures:
+\begin{itemize}
+\item Assuming that all profiles are junior, the maximum salary per year for each profile is collected.
+\item To that amount, a 30\% more is added for taxes, as a simplification.
+\item Finally, assuming each month has 22 working days and each day has 8 working hours, the obtained sum is divided by 2112 (22 x 12 x 8) to get the total amount per hour.
+\end{itemize}
+
+Table \ref{tab:human} lists all roles used and explains their work in the project. Each different role has had different duties, related to the scheduling planning tasks:
+
+\begin{itemize}
+\item The \underline{project manager} did the scheduling of the project and its specification, defined its budget, and wrote down all general documentation.\\ Related tasks: Viability of the project (1), Project management (2), Research and documentation (3), and Finishing touches (5).
+\item The \underline{software designer} did some research and the mockup of the project.\\ Related task: Development tasks - Scripts research, design, and base script (4.1 and 4.2).
+\item The \underline{software developer} created the code of the project.\\ Related tasks: Main development task - Coding and Documentation (4.3 and 4.4).
+\item The \underline{software tester} did all testing parts of the project.\\ Related tasks: All testing stages on the Main development task (4.3 and 4.4).
+\end{itemize}
+
+\pagebreak
+
+\begin{table}[!htb]
+\centering
+  \begin{tabular}{| c | c | c | c | c |}
+  \hline \textbf{Tasks} & \textbf{Description} & \textbf{Hours task} & \textbf{Roles} & \textbf{Hours role} \\ \hline \hline 
+  T1 & Viability study & \the\value{tUnHours} & Project manager & \the\value{tUnHours} \\ \hline
+  T2 & Project management & \the\value{tDosHours} &  Project manager & \the\value{tDosHours} \\ \hline
+  T3 & Research and documentation & \the\value{tTresHours} &  Project manager & \the\value{tTresHours}  \\ \hline
+  T4 & Development task & \the\value{tQuatreHours} &  &  \\ \hline \hline 
+  \small{T4S1} & \small{Scripts research and analysis} & \small{\the\value{tQuatreUnHours}} & \small{Software designer} & \small{\the\value{tQuatreUnHours}}  \\ \hline
+  \small{T4S2} & \small{Design and base script} & \small{\the\value{tQuatreDosHours}} & \small{Software designer} & \small{\the\value{tQuatreDosHours}}  \\ \hline 
+  %\multirow{2}{*}{\small{T4S3}} & \multirow{2}{*}{\small{\begin{tabular}{@{}c@{}}Basic script \\to collect information\end{tabular}}} & \multirow{2}{*}{\small{\the\value{tQuatreTresHours}}} & \small{Software developer} & \small{18}  
+%  \\ \cline{4-5} & & & \small{Software tester} & \small{10}
+%  \\ \hline 
+  \multirow{2}{*}{\small{T4S3}} & \multirow{2}{*}{\small{Script in Python for Linux}} & \multirow{2}{*}{\small{\the\value{tQuatreQuatreHours}}} & \small{Software developer} & \small{44}  
+  \\ \cline{4-5} & & & \small{Software tester} & \small{7}
+  \\ \hline 
+  \multirow{2}{*}{\small{T4S4}} & \multirow{2}{*}{\small{Script in PowerShell for Windows}} & \multirow{2}{*}{\small{\the\value{tQuatreCincHours}}} & \small{Software developer} & \small{47}  
+  \\ \cline{4-5} & & & \small{Software tester} & \small{10}
+  \\ \hline \hline 
+  T5 & Finishing touches &  \the\value{tCincHours} & Project manager & \the\value{tCincHours} \\ \hline 
+  T6 & Final presentation & \the\value{tSisHours} &  Project manager & \the\value{tSisHours} \\ \hline \hline
+  \textbf{Total} &  & \the\value{totalHours} & & \the\value{totalHours} \\ \hline 
+  \end{tabular}
+  \caption{Tasks and roles relations} \vspace{3pt}
+  \label{tab:taskRoles}
+\end{table}
+
+% Project Manager = 42k  | * 30% = 54,6k  | / 2112 = 26
+% Software Designer = 50k  | * 30% = 65k  | / 2112 = 31
+% Software Devel = 30k   | * 30% = 39k  | / 2112 = 19
+% Software Tester/QA = 30k  | * 30% = 39k  | / 2112 = 19
+
+\begin{table}[!htb]
+\centering{
+  \begin{tabular}{| c | c | c | c |}
+  \hline \textbf{Role} & \textbf{Total time (hours)} & \textbf{Price per hour} & \textbf{Final cost} \\ \hline 
+  Project manager & \the\value{PMHours} & 26,00€ & \the\value{PMHoursTotal},00€        \\ \hline
+  Software designer & \the\value{DesignHours} & 31,00€ & \the\value{DesignHoursTotal},00€        \\ \hline
+  Software developer & 91 & 19,00€ & 1729,00€        \\ \hline
+  Software tester & 17 & 19,00€ & 323,00€        \\ \hline
+  Total & \the\value{totalHours}  &  & 11017,00€  \\ \hline 
+  \end{tabular}
+  \caption{Human resources budget.} \vspace{3pt}
+  \label{tab:human}
+  }
+\end{table}
+
+\pagebreak
+
+\subsubsection{General expenses}
+In all projects there are some indirect costs. Table \ref{tab:othercosts} summarize them all, using the values listed in \textit{Resources} (section \ref{ssec:resources}) and data extracted from the Internet\cite{TarifaLuzHora}\cite{InternetPrice}.
+
+\begin{table}[!htb]
+\centering
+  \begin{tabular}{| c | c | c | c |}
+  \hline \textbf{Product} & \textbf{Cost} & \textbf{Quantity} & \textbf{Final cost} \\ \hline 
+  Power consumption & 0,21453€/kWh & 1,8kWh and \the\value{totalFinalHours} hours & 173,00€  \\ \hline
+  Internet & 30€/month & 6 months & 180,00€        \\ \hline \hline   
+  \textbf{Total} & & & 353,00€  \\ \hline 
+  \end{tabular}
+  \caption{General expenses budget.} \vspace{3pt}
+  \label{tab:othercosts}
+\end{table}
+
+ 
+%\subsubsection{Unforeseen costs}
+%%As stated in the scheduling part, section \ref{sec:sched}, tasks may take a little longer than expected due to the need of lots of hours of testing. In that case, the final budget may increase but not significantly: software testing costs 10€/h (60€/day) and software developing costs 15€/h (90€/day), so even if more hours of testing are needed or some code modifications must be done, the final cost will increase between 60 and 90 euros per extra day.
+%Although the tasks are very limited and big unforeseen events are not expected, there is a possibility of a delay happening either in the research task or in the development task which would affect the final expenses in the following way:
+
+%Expense per day of delay: 0,35 of possibility * 90 euros per day * 3 days left = 94,50 €
+
+%Another unforeseen cost is the one we will have if there are no testers from a censored country, as we need to prove and get results of the performance of the final software on a real situation. If this happens, we will need to pay a Virtual Private Network (VPN) service, what will cost around 10€ per month.
+
+%\begin{table}[!htb]
+%\centering
+%  \begin{tabular}{| c | c | c | c |}
+%  \hline Product & Cost & Quantity & Final cost \\ \hline 
+%  Delay & max 90€/dia & 35\% and 3 days left & 94,50€  \\ \hline
+%  %VPN & 10€/month & 5 months & 50,00€        \\ \hline \hline   
+%  Total & & & 144,50€  \\ \hline 
+%  \end{tabular}
+%  \caption{Unforeseen costs budget.} \vspace{3pt}
+%  \label{tab:unforeseencosts}
+%\end{table}
+
+
+\subsubsection{Total costs}
+Using all data shown in previous tables \ref{tab:hardsoft}, \ref{tab:human} and \ref{tab:othercosts}, the total cost of the project is calculated in the following table \ref{tab:total}.
+
+\begin{table}[!htb]
+\centering
+  \begin{tabular}{| c | c |}
+  \hline Concept & Cost \\ \hline 
+  Hardware resources & 100,00€  \\ \hline
+  Software resources & 36,25€        \\ \hline 
+  Human resources & 11017,00€        \\ \hline 
+  General expenses & 353,00€        \\ \hline 
+%  Unforeseen costs & 144,50€        \\ \hline \hline
+  Pre-Total & 11506,25€  \\ \hline 
+  Contingency plan (10\%) & 1150,62€        \\ \hline \hline 
+  Total & 12656,88€  \\ \hline 
+  \end{tabular}
+  \caption{Total costs.} \vspace{3pt}
+  \label{tab:total}
+\end{table}
+
+As can be seen, the final budget for the project is 12.656,88 euros, which is quite affordable.

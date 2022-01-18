@@ -1,0 +1,75 @@
+\section{State of the art}
+\label{sec:stateOfArt}
+Over time, persistence mechanisms have adapted to constantly evolving technologies, and new techniques have been built using flaws in emerging programs. Nowadays, there are more than a hundred different techniques to deploy persistence and lots of vulnerable applications that can be used to achieve malicious execution, apart from the operating system tools that can be abused. 
+
+This section begins with a brief analysis of the current status, to get a better understanding of the subject and the tool developed in this project. More information can be found in section \textit{\ref{sec:research} - Research}, as it delves into persistence techniques and the systems they affect. 
+
+Finally, there is an explanation about some related work and previous attempts of building similar software, but this information is also expanded in sections \ref{sssec:windowsTools} and \ref{sssec:linuxTools} of the \textit{Research} part.
+
+\subsection{Persistence techniques when performing a cyberattack}
+\label{ssec:persistencetechniques}
+Since persistence is a widely used tactic, the number of techniques increases every year as new software is created and old programs are patched or redesigned to prevent or make it more difficult to deploy persistence without the user being notified.
+
+For that reason, there are several techniques to deploy persistence but its effectiveness and fitness depends on multiple factors, like the following ones:
+
+\begin{itemize}
+\item Operating system
+\item User privileges
+\item Computer's connectivity to the Internet
+\end{itemize}
+
+And despite new techniques emerging now and then, the most often deployed are the ones that have been in use for many years. Some of these techniques are listed in table \ref{tab:persistenceCommonTech}.\\
+
+\begin{table}[!htb]
+\centering
+{\setlength{\tabcolsep}{2em}
+  \begin{tabular}{@{\extracolsep{\fill}}| c | c |}
+  \hline \textbf{Windows} & \textbf{Linux} \\ \hline \hline 
+  	Startup Folder & \texttt{crontab}  \\ \hline
+  	Registry & boot, login and shells (rc, init, bash) \\ \hline
+  	Scheduled tasks & \texttt{systemd} \\ \hline
+  	Services &  \\ \hline 
+  \end{tabular}}
+  \caption{Common persistence listed by operating systems} \vspace{3pt}
+  \label{tab:persistenceCommonTech}
+\end{table}
+
+\pagebreak
+Apart from computers, persistence can be applied to any type of smart devices, such as smartphones or electronic devices connected to the Internet (IoT), but these types of machines and environments are out of the scope of this project.
+
+This topic is explained in more depth through all the section \ref{sec:research} - \textit{Research}.
+
+\subsection{Similar projects and previous attempts}
+\label{ssec:similarAndPrevious}
+Persistence is a tactic that has been used quite a bit in the last 30 years, so, naturally, there is a lot of information on the topic and even several websites with large compilations of its techniques\cite{PayloadAllTheThings}\cite{AwesomeRT}\cite{DomPersistenceCommands}. There are also some papers on the subject, but they tend to be very technical so a high level of prior knowledge is needed to be able to understand them. Therefore, the existing lists were used to shape the research section, but in this document, the information extracted from each technique is explained in a simpler and more accessible way.
+
+Additionally, to ease and improve the development of the tool, a study of existing similar and already done software has been carried out to spot main differences and to be aware of which additional features can be added. And, even though there are a lot of tools that implement some kind of persistence mechanism, the most similar and popular are \textit{SharPersist}\cite{SharPersist} and \textit{Meterpreter}\cite{Metasploit}, which are explained more in-depth in sections \ref{sssec:windowsTools} and \ref{sssec:linuxTools}. These tools are configurable, easy to use, and automatic, but they do not change their behaviour based on the information extracted from the computer where they are running, so even though they are tools pretty close to the one that is developed in this project, there are some key differences.
+
+
+%
+%\subsection{Similar projects}
+%\label{ssec:similar}
+%To build this project it is interesting to search for similar and already done software to spot main differences and to be aware of which additional features can be added.
+%
+%There are lots of tools that implement some kind of persistence mechanism, but this section will only focus on the two that are most similar and popular.
+%
+%\subsubsection{SharPersist}
+%SharPersist\cite{SharPersist} is a Windows persistence toolkit developed in C\#, so it is not a script but an executable file. It is a modular, and therefore expandable, tool that was created by FireEye team in order to assist with establishing persistence on Windows operating systems using a multitude of different techniques like modifying the registry, adding schedule tasks or services and also modifying specific files of software such as Keepass \footnotemark\footnotetext{https://keepass.info/} or Tortoise SVN \footnotemark\footnotetext{https://tortoisesvn.net/}. 
+%
+%The techniques this tool can deploy do not always require administrator privileges, but it is also not fully automated: it works with the arguments received, so it needs to be prepared beforehand.
+%
+%\subsubsection{Metasploit - Meterpreter}
+%A tool that is used a lot when performing security analysis is Meterpreter, from the Metasploit framework\cite{Metasploit}, developed by Rapid7. Meterpreter is an advanced, dynamically extensible payload that uses lots of techniques from different tactics in order to avoid detection, communicate over the network, get information about the computer and the internal network, etc. It is an executable file, developed in Ruby, that has a very wide suite of functionalities, being "persistence" among them\cite{Meterpreter}.
+%
+%The persistence mechanism this tool creates is both leaving a file with the payload (meterpreter) and also adding a new service to the system that executes this file. Once loaded, the meterpreter payload will, first of all, try to connect back to the attacker's server, thus creating a backdoor.
+%
+%
+%
+%\subsection{Previous attempts}
+%\label{ssec:previous}
+%Persistence is a tactic that has been used quite a bit in the last 30 years, so it is natural that there is a lot of information on the topic and even several websites with large compilations of its techniques\cite{PayloadAllTheThings}\cite{AwesomeRT}\cite{DomPersistenceCommands}. There are also some papers on the subject, but they tend to be very technical so a high level of prior knowledge is needed to be able to understand them.
+%Therefore, the existing lists will be used in order to facilitate outlining of the research section, but the information on each technique will be explained in a simpler and more accessible way.
+%
+%There are also some tools that deploy persistence as explained in the previous section \ref{ssec:similar}, but only a few of them attempt to totally automate the process, and are not always configurable, easy to use or automatic, like SharPersist\cite{SharPersist} or Meterpreter\cite{Metasploit}. Also they do not change its behaviour based on the information extracted from the computer where they are running, so even though they are tools pretty close to the one that is being created in this project, there are some key differences.
+%
+%In any case, it is possible to use the aforementioned tools in order to ease the implementation of some of the methods of the final software.

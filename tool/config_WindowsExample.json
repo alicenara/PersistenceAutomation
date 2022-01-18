@@ -1,0 +1,33 @@
+{
+    "discovery": {
+        "pingTestIP": "8.8.8.9",
+        "httpsTestUrl": "www.upc.edu",
+        "proxy": ""
+    },
+    "payload": {
+        "path": "C:\\Users\\user\\Desktop\\maltest.ps1",
+        "pathToSave": "C:\\Users\\user\\legitFile.ps1",    
+        "preArguments": "",
+        "postArguments": ""
+    },
+    "persistence": {
+        "adduserName": "srvUser",
+        "adduserPass": "randompasswd",
+        "cronjobTime": "@reboot",
+        "serviceName": "servtest",
+        "serviceDesc": ""
+    },
+    "backdoors": {
+        "HTTPSCommand": "",
+        "HTTPSCommandPreProxy":"",
+        "HTTPSCommandPostProxy": "",
+        "DNSCommand": "",
+        "ICMPCommand": ""        
+    },
+    "preferences": {
+        "excludedTechniques": ["startupFolder", "registry"],
+        "includedTechniques": ["checkAdmin", "addUser", "startupFolder", "registry", "scheduledTask", "service", "wmi"],
+        "excludedProtocols": [],
+        "forceProtocols": []
+    }
+}

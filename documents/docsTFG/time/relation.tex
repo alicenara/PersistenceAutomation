@@ -1,0 +1,56 @@
+\newcounter{totalHours}
+\setcounter{totalHours}{%
+	\numexpr\value{tUnHours}+\value{tDosHours}+\value{tTresHours}+\value{tQuatreHours}+\value{tCincHours}+\value{tSisHours}\relax%
+	} 
+\newcounter{totalFinalHours}
+\setcounter{totalFinalHours}{\numexpr\value{totalHours}+5\relax} 
+
+\subsection{Relation about tasks, resources and dependencies}
+\label{ssec:tasksAndResources}
+The relation between all the tasks (\ref{ssec:tasks} - \textit{Tasks}) and the resources (\ref{ssec:resources} - \textit{Resources}) is described in the following table (table \ref{tab:relation}). \\
+
+\begin{table}[!htb]
+\centering
+  \begin{tabular}{| c | l | l | l | c |}
+  \hline Tasks & Section & Description & Hours & Specific resources \\ \hline \hline 
+  T1 & \ref{sssec:viabilityTask} & Viability study & \the\value{tUnHours} & No specific resources \\ \hline
+  T2 & \ref{sssec:projectManagementTask} & Project management & \the\value{tDosHours} &  No specific resources \\ \hline
+  T3 & \ref{sssec:researchTask} & Research and documentation & \the\value{tTresHours} & No specific resources \\ \hline
+  T4 &   \ref{sssec:mainDevTask} & Development task & \the\value{tQuatreHours} &         \\ \hline \hline 
+  \small{T4S1} & \small{- Subtask 1} & \small{Scripts research and analysis} & \small{\the\value{tQuatreUnHours}} & \small{No specific resources}  \\ \hline
+  \small{T4S2} & \small{- Subtask 2} & \small{Design and base script} & \small{\the\value{tQuatreDosHours}} &  \small{No specific resources}  \\ \hline 
+  %\small{T4S3} & \small{- Subtask 3} & \small{Basic script to collect information} & \small{\the\value{tQuatreTresHours}} & \small{Development tools} \\ \hline 
+  \small{T4S3} & \small{- Subtask 3} & \small{Script in Python for Linux} & \small{\the\value{tQuatreQuatreHours}} & \small{Development tools}  \\ \hline 
+  \small{T4S4} & \small{- Subtask 4} & \small{Script in PowerShell for Windows} & \small{\the\value{tQuatreCincHours}} & \small{Development tools}  \\ \hline  \hline
+  T5 &   \ref{sssec:finalTask} & Finishing touches & \the\value{tCincHours} &  No specific resources  \\ \hline 
+  T6 &   \ref{sssec:finalPresentationTask} & Final presentation & \the\value{tSisHours} &  No specific resources  \\ \hline \hline
+  \textbf{Total} &  &  & \the\value{totalHours} & \\ \hline 
+  \end{tabular}
+  \caption{Tasks and resources relation} \vspace{3pt}
+  \label{tab:relation}
+\end{table}
+
+It is important to consider is that some resources are common to all tasks, and therefore they are not listed in the table. These resources, described accurately in section \ref{ssec:resources}, are:
+\begin{itemize}
+\item A computer
+\item A Linux Operating System
+\item Tools to perform the version control 
+\end{itemize}
+
+To the final amount of hours, it is necessary to add the time spent on control meetings (5 hours). Consequently, the total amount of time spent on this project is about \textbf{\the\value{totalFinalHours} hours}.
+
+\pagebreak
+Finally, about dependencies on tasks, there are indeed some as stated in each task description, in section \ref{ssec:tasks} of this document. These dependencies can be represented as follows:
+
+\begin{description}
+\item Task T3 started some weeks after task T2, before its completion. All the other tasks needed to be finished before proceeding to the next one.
+
+\begin{center} T1 < T2 \& T3 < T4 < T5 < T6 \end{center}
+
+\item On T4 subtasks, although they required to be finished before starting the next one, the Testing and Documenting phases of the lasts subtasks (T4S3 and T4S4) were done at the same time, so their dependencies were:
+
+\begin{center} [Last subtask] < Development < Testing \& Documentation < [New subtask] \end{center}
+
+\end{description}
+
+These dependencies are graphically shown on the Gantt chart and the PERT diagram (\ref{ssec:gantt} and \ref{ssec:pert}).

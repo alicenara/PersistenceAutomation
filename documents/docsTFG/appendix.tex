@@ -1,0 +1,163 @@
+\section*{Appendix} 
+\label{sec:appendix}
+%\paragraph{Tool description and usage}
+%This is a tool to automate the deployment of persistence on both Windows and Linux, using a customizable configuration file and the data obtained after executing some discovery techniques on the machine.
+%
+%These scripts are programmed in Python 3 (Linux) and PowerShell 5 (Windows).
+%
+%To run them, only three elements are needed:
+%\begin{enumerate}
+%\item A configuration file, with all the necessary parameters filled. This file needs to be in the same folder as the script. There is an example in \cite{ThisProjectGit}.
+%\item (optional) A payload or a script to be executed. This payload should be in the same folder as this tool or have its path specified in the configuration options.
+%\item To be able to execute the downloaded script. The following code shows how to make it executable in both systems:
+%\begin{spverbatim}
+%### For the Linux script ###
+%> chmod +x ./linPDA.py
+%
+%### For the Windows script, on the PowerShell console ###
+%> Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+%\end{spverbatim}
+%\end{enumerate}
+
+
+
+
+\section{Information Technologies Technical Competences}
+Only two competencies were applied to this project because it is security-oriented, and although \textit{Computer Security} is a compulsory subject in the IT major, most of the competencies were focused on the network part of the specialization.
+
+\begin{itemize}
+\item \textbf{CTI2.3}: \textit{To demonstrate comprehension, apply and manage the reliability and security of the computer systems (CEI C6)}. [Deeply]
+
+One of the objectives of this project is to bring the field of cybersecurity closer to technicians without knowledge or experience, and for that reason, both the information collected and the tool developed are ultimately designed to improve the security of computer systems, both on a personal and business level.
+
+\item \textbf{CTI3.4}: \textit{To design communications software.} [Quite]
+
+Communication protocols and tunnelization are two interesting concepts that have been explained in the research section.\\
+Although this project is not centered in provide communication, the scripts developed are able to check the network status of a machine in order to deploy software that can establish a connection with a remote server if possible, to control the host machine remotely. 
+
+\end{itemize}
+
+\pagebreak
+\section{Tool code snippets}
+\label{sec:toolCode}
+\paragraph{Base script file with sections}
+The code below is an example of the base script used, where the different sections are visible.\\ It is written in pseudocode:
+\begin{verbatim}
+##########<START Block comment>#########
+.DEPENDENCES
+
+.DESCRIPTION 
+Script for the automation of the deployment of persistence. 
+
+It contains 3 different parts:
+* Discovery of the machine
+    - Checks its Internet access
+    - Checks if there is a proxy configured
+    - Checks if the process is elevated
+* Persistence deployment
+    - copy the file to another location
+    - add user
+    - jobs
+    - services
+* Backdoor deployment
+    - system specific backdoors
+    - reverse shell tool
+
+Also it checks if a configuration file exists (named "config.json") 
+ searching for different parameters in JSON.
+
+Finally it displays info about the processes and the results obtained.
+
+.OTHERS
+
+##########<END Block comment>#########
+
+###### Imports ######
+
+##############################################################
+### Init
+##############################################################
+###### Default values for variables ######
+###### Config file load ######
+###### Other variables overwrite ######
+###### Other functions ###### 
+
+##############################################################
+### Discovery techniques
+##############################################################
+##### Internet access #####
+##### Check for proxy #####
+##### User/process permissions #####
+
+##############################################################
+### Persistence techniques
+##############################################################
+##### Download payload from an URL ##### 
+##### Copy payload to new location ##### 
+##### Creating new user ##### 
+##### Configure jobs ##### 
+##### StartUp scripts ##### 
+##### Setting a service ##### 
+##### Other system persistence techniques ##### 
+
+##############################################################
+### Backdoor techniques
+# Reverse shell techniques are added to new crontab jobs/scheduled tasks
+##############################################################
+##### System backdoor functions #####
+##### Tool reverse shell #####
+
+##############################################################
+### Main function
+##############################################################
+
+main_function():
+    print("\n#########################################")
+    print(" ## Persistence deployment automation ## ")
+    print("#########################################\n")
+    ##### Variables #####  
+    ##### Discovery #####
+    print("* Discovery")    
+    ##### Persistence and backdoors #####
+    print("\n* Applied techniques:")
+
+main_function()
+\end{verbatim}
+
+\pagebreak
+\paragraph{Configuration file}
+The following code is an example of the different configuration parameters:
+\begin{verbatim}
+## Example of the shared parameters for Windows systems ##
+# This allows to check if HTTPS and ICMP connection is possible, and to use
+#  a payload for different techniques like the Startup Folder technique 
+{
+    "discovery": {
+        "pingTestIP": "8.8.8.8",
+        "httpsTestUrl": "www.upc.edu"
+    },
+    "payload": {
+        "path": "C:\Users\User\Downloads\maltest.ps1",
+        "pathToSave": "C:\Users\User\legitFile.ps1"
+    }
+}
+
+## Example of the specific parameters for Linux systems ##
+# With this information, a new user can be created, a cronjob can be set
+#  a netcat connection can be initialized and a SSH authkey can be stored
+{
+    "persistence": {
+        "adduserName": "ftp2",
+        "adduserPass": "randompasswd",
+        "adduserArgs": "-s /bin/bash",
+        "cronjobTime": "@reboot"
+    },
+    "backdoors": {
+        "serverIPURL": "192.168.1.137",
+        "serverPort": "8008",
+        "serverUser": "linux",
+        "sshAuthKey": "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbm
+        lzdHAyNTYAAABBBDoxGnbxz865b/uriEPp7hn++dbTHlCm1REaV8BNKwPifzQx7oB1mTnKMn
+        ClhPZbPK2ZvJPZT/tutcB7RlKoa8g="
+}
+\end{verbatim}

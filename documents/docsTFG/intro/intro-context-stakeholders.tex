@@ -1,0 +1,152 @@
+\section{Introduction and contextualization}
+\label{sec:introduction}
+
+Everyone has heard about malware (or \textit{malicious software}), particularly the one classified as ransomware, which is affecting lots of public and private corporations nowadays. But even though the existence of malware is not recent, it is still something that people are not as afraid of as they should be.
+
+Malware could be designed to be sent massively, with no target, to extract information or damage a single computer easily; and also can be used by sophisticated groups of expert cyber criminals who target large companies to get bigger benefits. These groups are called \textit{APTs} and are explained in section \ref{sssec:apt}.
+
+No matter the goal, it is common both in malware and in other types of cyberattacks to use mechanisms to be able to re-execute a file or a command, or reconnect with malicious servers, after the victim's machine reboots or the process ends unexpectedly. For sophisticated groups it is even more important, as losing connectivity with systems they have already compromised could make them lose lots of money and reputation. These techniques are classified as \textit{persistence}, and are one of the main types of most common tasks done during cyberattacks.
+
+Cybersecurity is a field that studies, among other things, how malware works and what can be done to protect all users when facing this kind of menace. 
+When offering cybersecurity services, some of the main activities are pentestings and red teams, which are explained thoroughly in section \ref{sssec:redTeam}. In these tests, analysts make simulations of real attacks to evaluate how efficient against malicious actions are antimalware and protection solutions the company has installed, or if the security team is able to detect the attack. 
+
+The main goal of this project is, on the one hand, to study how persistence is being done in the present day, as there are lots of websites with compilations of techniques but not all of them are common or work nowadays. And on the other hand, to create a tool to automate the deployment of different persistence mechanisms to help analysts when doing these kinds of tests on different systems.
+
+%Also, it is worth mentioning that this project is based on the Master's degree final thesis named \textit{"Advanced persistence deployment automation"}, which has been developed at the same time as this one, mentored by Eduardo Arriols\cite{RTBook}.
+
+\pagebreak
+\subsection{Context}
+\label{sec:context}
+
+Since it is assumed that readers are not familiar with cybersecurity terms, activities, and actors, aside from hearing about security incidents from time to time; this section introduces all elements that are basic to understand further research sections.
+
+\subsubsection{Cybersecurity}
+\label{sssec:cybersec}
+
+Cybersecurity, computer security or information technology (IT) security is the discipline that studies how to protect computer systems and networks from different types of threats, like information disclosure, theft or damage to their hardware, software, or electronic data, as well as from the disruption or misdirection of the services they provide. 
+
+As time passes by, this discipline is becoming more and more important due to both the increasing number of attacks and the reliance of nowadays society on computers, networks (like the Internet), and other types of IT systems. 
+
+This project focuses on a specific, small part of this big field: a type of action that is often performed by cybersecurity professionals when analysing a computer or a network, mimicking what attackers also do, in order to evaluate how effective are all security measures implemented on the analysed targets.
+
+\subsubsection{Malware and cyber threat actors}
+\label{sssec:apt}
+
+A \textit{cyber threat} is an activity intended to compromise the security of an information system by altering the availability, integrity, or confidentiality of a system or the information it contains\cite{CanadaWeb}. 
+
+\textit{Cyber threat actors} (or \underline{adversaries}) are states, groups, or individuals who, with malicious intent, aim to take advantage of vulnerabilities, low cyber security awareness or technological developments, to gain unauthorized access to information systems in order to access or otherwise affect victims' data, devices, systems, and networks.
+
+These actors can have different motivations and levels of sophistication when deploying an attack, but when their activity is focused on a specific target and their actions are stealthy, they are usually called "\textit{Advanced Persistent Threats}" or "\textit{APTs}". 
+
+\textit{Malware}, a word meaning "malicious software", is a program developed by cyber threat actors to carry out its objectives and goals. It can be more or less sophisticated, which is evaluated taking into account various parameters like what it does, if it is stealthy, if the code is obfuscated, etc.; and commonly deploys some kind of persistence in the machine it is running or in others that are reachable. 
+
+\pagebreak
+Not all malware deploys persistence, as often different functionalities are divided into different pieces of malware (or \textit{payloads}), but it is something especially useful when performing major attacks.
+
+\subsubsection{Red and blue teams}
+\label{sssec:redTeam}
+
+There are lots of people that play an important role in cybersecurity departments to detect or prevent attacks caused by cyber threat actors. These security professionals are often divided into two different groups:
+\begin{itemize}
+\item Blue Team: a group that performs an analysis of all systems to check their security status, identify flaws or vulnerabilities, verify the effectiveness of implemented security measures (like antivirus or intrusion detection systems (IDS)), etc.
+
+\item Red Team: a team that executes simulated attacks. They gather techniques used by malicious cyber threat actors to put on a test different security measures implemented on a system and/or network. This word is also used to name the simulated attack itself.
+\end{itemize}
+
+There are other types of cybersecurity professionals that do not fit in any of these categories, but their work might be similar to one of those.
+
+Both teams can be focused on computers, which are called workstations (personal computers) or servers (machines that host services, making them more critical), and/or in the network or the way the computers communicate, that can be divided in the physical network (firewalls, routers, etc.) or a more logical one (like \textit{Active Directory}, a directory service for Windows domain networks, explained later in section \ref{sssec:adContext}).
+
+\subsubsection{Adversary tactics and techniques - Persistence}
+\label{sssec:persistence}
+
+Focusing in the offensive part of cybersecurity, when performing an attack on a machine or a network, each of the actions can be classified into a category: Reconnaissance, \textit{Initial Access}, \textit{Execution}, \textit{Privilege Escalation}, \textit{Defense Evasion}, \textit{Lateral Movement}, \textit{Exfiltration}, \textit{Command and Control}, \textit{Persistence}...
+
+For some years now there has been a standardization of the names of the categories, as there is a tool that helps classify it and its reports have become in high demand when writing a company security status evaluation. This tool is provided by the MITRE company and is called "MITRE ATT\&CK®"\cite{MitreWeb}. 
+
+To make it more simple, in this document the standard names "tactics" and "techniques" will be used. \underline{Tactics} refers to one of the main categories an action can be classified into (like \textit{Execution} or \textit{Privilege Escalation}), and \underline{techniques} are the specific action that is classified inside a tactic (for example "\textit{Python execution}"). 
+
+\pagebreak
+This project is centered specifically on the "Persistence" tactic, as it is often used in attacks. This tactic's definition is as follows\cite{Mitre}:
+
+\begin{displayquote}
+Persistence consists of techniques that adversaries use to keep access to systems across restarts, changed credentials, and other interruptions that could cut off their access. Techniques used for persistence include any access, action, or configuration changes that let them maintain their foothold on systems, such as replacing or hijacking legitimate code or adding startup code.
+\end{displayquote}
+
+As there are multiple ways of deploying persistence, even though the software developed is focused on the ones that are more common and that can be automated, some more research has been done on some other different ways of creating persistence. \\More information on this topic can be found in section \ref{sec:research} of this document.
+
+\subsubsection{Backdoors applied to persistence}
+\label{sssec:backdoors}
+
+Another important concept is related to how adversaries communicate with the malware running in their victim's infrastructure. \textit{Backdoors} are stealthy ways to allow attackers that have already made their way into their target's infrastructure, to be able to enter again if they lose their main connection. These techniques can be tied to adversary software, vulnerabilities in a program or unwanted configurations in a victim's computer that is (usually) connected to the Internet. 
+
+When deploying a backdoor, it is common to try to establish a connection (a "tunnel") with an attacker's controlled server, using protocols that can be easily blended with the usual traffic of the victim's infrastructure, like HTTPS, DNS or ICMP (ping). In section \textit{\ref{sec:research} - Research}, protocols and other elements related to backdoors are explained in depth.
+
+\subsubsection{Proxies}
+\label{sssec:proxies}
+When using backdoors, though, connecting with the Internet is not always a straightforward task, as most corporations use \textit{proxies}. Proxies are server applications that act as an intermediary between a client requesting a resource and the server providing that resource. The most common type of proxy in a company is the web proxy (a proxy that logs HTTP and HTTPS requests), but there are other types of proxies that can be used for multiple purposes.
+
+Lots of corporations use web proxies to record and have control over the sites their employees visit, with various motivations like ensuring they do not have malware installed in their computers initiating connections to remote servers.
+
+\pagebreak
+These proxies are usually authenticated, which means that the user needs to send some type of credentials to the proxy to connect to the Internet via protocols like HTTP/S. These credentials can be either user and password, or they can be automatically authenticated using their network credentials (when there is a system like \textit{Windows Active Directory} configured).
+
+\subsubsection{Other adversary tactics and techniques}
+\label{sssec:otherTactics}
+
+Aside from "\textit{Persistence}", MITRE ATT\&CK® Framework lists other tactics that are involved during an attack, like "\textit{Command and Control}" (controlling the victim's machine remotely) and "\textit{Discovery}" (gathering information about the environment). Using only one tactic is frequently not enough to deploy an attack, and therefore, an intrusion is often a combination of different tactics and techniques.
+
+For example, backdoors are not actions associated with the tactic "\textit{Persistence}" but with other tactics like "\textit{Command and Control}", because they are a mechanism to regain control of a machine remotely. However, it is beneficial to include it in this project, since persistence techniques are more useful when there is a connection with the victim's infrastructure to control the malware already placed and running.
+
+Also, some "\textit{Discovery}" techniques are implemented in the developed tool as well, being that they provide essential information needed to automate the deployment of the persistence mechanism that suits better the environment where it is running.
+
+\subsubsection{Active Directory and domain services}
+\label{sssec:adContext}
+
+It is very common in medium and big corporations to use services that allow users to connect with the network resources they need to get their work done, or to have login information that is not attached to a single computer, but can be used in any of the machines inside the network. 
+
+Given that most companies use Microsoft Windows as their standard operating system for their computers, it is frequent to use a \textit{Windows domain} to manage users and resources. A \underline{domain} is a form of computer network in which all user accounts, computers, printers and other entities, are registered in a database located on one or more clusters of central computers known as \textit{Domain Controllers} (DCs). Each person who uses a computer within a domain receives a unique user account, which can then be assigned access to resources inside the domain.
+
+\underline{Active Directory} (\textbf{AD}) is a directory service released in 1999 by Microsoft, for Windows domain networks. It is a set of databases and services that are used to organize, locate and manage network resources.
+
+\pagebreak
+It has many utilities, like:
+\begin{itemize}
+\item Enable administrators to manage permissions and access to network resources, providing authentication and authorization mechanisms
+\item Help with the assignment and enforcement of security policies for all computers
+\item Establish a framework to deploy other related services, such as Certificate Services
+\end{itemize}
+
+To carry out most of its functionalities, it relies on a few protocols, being the most important ones:
+\begin{itemize}
+\item \underline{LDAP} (Lightweight Directory Access Protocol), needed to access and maintain distributed directory information services,
+\item The old network protocol \underline{NTLM}, or NT (New Technology) LAN Manager, which is a security protocol intended to provide authentication, integrity, and confidentiality to users, but due to serious flaws in its design (such as the lack of servers' authentication), it has been in disuse for some years now, even though it is still supported as there are lots of companies that still use it;
+\item And its replacement, \underline{Kerberos}, a computer network authentication protocol that works using special "\textit{tickets}" to allow nodes (computers, printers...) to prove their identity to one another in a secure manner. When a user tries to log in, they send Kerberos tickets to Domain Controllers, which handle the authentication (validating that users are whom they claim to be) using their databases, and later some more tickets are sent to the requested services, as they handle the authorization (checking the user permission to access a specific resource or function).
+\end{itemize} 
+
+\subsection{Stakeholders}
+\label{sec:stakeholders}
+%People that have an interest in an organization and the outcomes of its actions are called "stakeholders". 
+There are many involved parties in this project, with interest in the resulting work. These stakeholders can be divided into two different groups: people who were directly implicated in the development of the project, and users who will gain knowledge and use the software, and therefore benefit from both the research and the automation.
+
+\paragraph{People that had direct interaction with the project}
+Three principal actors have contributed to the making of this project:
+\begin{itemize}
+\item \textbf{Main developer}: the author of this project, Lucia Di Marco, has been working taking all the different necessary roles like "project manager" (scheduling and documentation), "software designer" (design of the structure of the code and how the final project will be bundled), "software developer" (coding part) and "software tester" (testing of the different parts to report bugs). More information about roles and their specific tasks can be seen in section \ref{sssec:humanResources}.
+
+%This developer has been the most active person in the project and is the responsible for creating all project different parts.
+
+\item \textbf{Project's director}: this project has been directed and coordinated by the UPC professor Jordi Delgado, who helped to guide the developer on each phase of the project.
+
+\item \textbf{Special mentor}: the proposal and the first definition of this project was elaborated with Eduardo Arriols, the author of the book "\textit{CISO: The Red Team of the company}"\cite{RTBook}, who 
+%is also the CEO of a cybersecurity company called "\textit{RootPointer}" and 
+teaches about cybersecurity in several universities.
+
+\end{itemize}
+
+It is worth mentioning that the GEP tutor Ferran Sabaté helped with the definition of some of the parts of this document such as budget evaluation, time management, etc.
+
+\paragraph{Final users of the program and the documentation}
+Both the software and the information gathered in this project are meant to be used by cybersecurity professionals when performing any kind of security analysis that requires the use of persistence, as it can provide the needed knowledge to perform the deployment, and also the scripts can make it easier and quicker for them to deploy persistence techniques on a computer. 
+
+But all the collected information can also be used by anyone curious about this topic, especially people interested in the cybersecurity field, as it can be used as an introduction to some advanced knowledge. 
