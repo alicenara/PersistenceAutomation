@@ -34,7 +34,7 @@ It can be achieved using the following commands:
 Possible functions to execute:
 
 - Protocols to be checked: HTTPS, DNS, ICMP
-- Linux functions: checkRoot, adduser, crontab, init, service, sshShell, sshAuth, ncShell,
+- Linux functions: checkRoot, addUser, crontab, init, service, sshShell, sshAuth, ncShell,
             toolHTTPS, toolDNS, toolICMP
 - Windows functions: checkAdmin, downloadFile, copyFile, addUser, startupFolder, registry, 
             scheduledTask, service, wmi, bitsJob, rdp, toolHTTPS, toolDNS, toolICMP

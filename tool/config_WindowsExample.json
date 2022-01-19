@@ -13,9 +13,8 @@
     "persistence": {
         "adduserName": "srvUser",
         "adduserPass": "randompasswd",
-        "cronjobTime": "@reboot",
-        "serviceName": "servtest",
-        "serviceDesc": ""
+        "schedTaskTime": "-Daily",
+        "serviceName": "servtest"
     },
     "backdoors": {
         "HTTPSCommand": "",

