@@ -95,6 +95,8 @@ Also, the Windows Task Scheduler can be managed either through the GUI within th
 > schtasks /run /tn "Device-Synchronize"
 
 ### Commands in PowerShell (with elevated privileges) ###
+
+> $A = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c C:\Users\User\backdoor.exe"
 > $T = New-ScheduledTaskTrigger -Daily -At "9/30/2020 11:05:00 AM"
 > $P = New-ScheduledTaskPrincipal "NT AUTHORITY\SYSTEM" -RunLevel Highest
 > $S = New-ScheduledTaskSettingsSet
